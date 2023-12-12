@@ -150,11 +150,11 @@ void AutomatDeterministyczny::przedstaw_zakonczenie()
 {
 	switch (stan)
 	{
-		case MozliweStany::q15: { std::cout << "Automat wydaje bilet." << std::endl; }
-		case MozliweStany::q16: { std::cout << "Automat wydaje bilet i reszte 1 PLN." << std::endl; }
-		case MozliweStany::q17: { std::cout << "Automat wydaje bilet i reszte 2 PLN." << std::endl; }
-		case MozliweStany::q18: { std::cout << "Automat wydaje bilet i reszte 3 PLN." << std::endl; }
-		case MozliweStany::q19: { std::cout << "Automat wydaje bilet i reszte 4 PLN." << std::endl; }
+	    case MozliweStany::q15: { std::cout << "Automat wydaje bilet." << std::endl; break; }
+		case MozliweStany::q16: { std::cout << "Automat wydaje bilet i reszte 1 PLN." << std::endl; break; }
+		case MozliweStany::q17: { std::cout << "Automat wydaje bilet i reszte 2 PLN." << std::endl; break; }
+		case MozliweStany::q18: { std::cout << "Automat wydaje bilet i reszte 3 PLN." << std::endl; break; }
+		case MozliweStany::q19: { std::cout << "Automat wydaje bilet i reszte 4 PLN." << std::endl; break; }
 	}
 	return;
 }
@@ -174,4 +174,21 @@ void AutomatDeterministyczny::zresetuj_automat()
 {
 	stan = stan_poczatkowy;
 	czy_koniec = false;
+	return;
+}
+
+MozliweStany AutomatDeterministyczny::daj_aktualny_stan()
+{
+	return this->stan;
+}
+
+bool AutomatDeterministyczny::czy_jest_w_stanie_akceptujacym()
+{
+	bool werdykt = false;
+	if (stan == MozliweStany::q15) { werdykt = true; }
+	else if (stan == MozliweStany::q15) { werdykt = true; }
+	else if (stan == MozliweStany::q15) { werdykt = true; }
+	else if (stan == MozliweStany::q15) { werdykt = true; }
+	else { werdykt = true; }
+	return werdykt;
 }

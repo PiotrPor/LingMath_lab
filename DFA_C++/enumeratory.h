@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 enum Symbole 
 {
     m1,
@@ -33,3 +35,6 @@ enum MozliweStany
 
 bool czy_nalezy_do_alfabetu(char sym);
 Symbole zamien_na_symbol(char sym);
+
+std::string symbol_wejsciowy_jako_string(Symbole s);
+std::string stan_jako_string(MozliweStany s);

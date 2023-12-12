@@ -16,6 +16,8 @@ class AutomatDeterministyczny
 	  bool powiedz_czy_koniec();
 	  void wymuszenie_zakonczenia();
 	  void zresetuj_automat();
+	  MozliweStany daj_aktualny_stan();
+	  bool czy_jest_w_stanie_akceptujacym();
 };
 
 #endif

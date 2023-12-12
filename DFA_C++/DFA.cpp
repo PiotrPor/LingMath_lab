@@ -34,7 +34,6 @@ int main()
             {
                 std::cout << "Error przy analizie ciagu nr " << ktory_string + 1 << std::endl;
                 std::cout << "Automat zakonczyl prace przed koncem ciagu" << std::endl;
-                std::cout << "x=" << x << std::endl; //debug
                 DFA.wymuszenie_zakonczenia();
                 x = badany_ciag.size() + 5;
                 continue;
@@ -47,7 +46,7 @@ int main()
             }
         }
         //
-        if (DFA.powiedz_czy_koniec() && x == badany_ciag.size())
+        if (DFA.czy_jest_w_stanie_akceptujacym() && x == badany_ciag.size())
         {
             std::cout << "Badanie ciagu nr " << ktory_string + 1 << " zakonczone\n   ";
             DFA.przedstaw_zakonczenie();
