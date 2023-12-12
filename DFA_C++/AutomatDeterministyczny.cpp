@@ -186,9 +186,9 @@ bool AutomatDeterministyczny::czy_jest_w_stanie_akceptujacym()
 {
 	bool werdykt = false;
 	if (stan == MozliweStany::q15) { werdykt = true; }
-	else if (stan == MozliweStany::q15) { werdykt = true; }
-	else if (stan == MozliweStany::q15) { werdykt = true; }
-	else if (stan == MozliweStany::q15) { werdykt = true; }
-	else { werdykt = true; }
+	else if (stan == MozliweStany::q16) { werdykt = true; }
+	else if (stan == MozliweStany::q17) { werdykt = true; }
+	else if (stan == MozliweStany::q18) { werdykt = true; }
+	else if (stan == MozliweStany::q19) { werdykt = true; }
 	return werdykt;
 }
