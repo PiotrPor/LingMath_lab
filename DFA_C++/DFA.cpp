@@ -24,6 +24,7 @@ int main()
         {
             symbol_na_wejscie = zamien_na_symbol(wczytany_znak);
             DFA.funkcja_przejscia(symbol_na_wejscie);
+            std::cout << "Teraz jest w stanie " << stan_jako_string(DFA.daj_aktualny_stan()) << std::endl;
         }
         else
         {
@@ -35,7 +36,6 @@ int main()
     //
     if (DFA.czy_jest_w_stanie_akceptujacym())
     {
-        std::cout << "Badanie ciagu zakonczone\n   ";
         DFA.przedstaw_zakonczenie();
     }
     return 0;
