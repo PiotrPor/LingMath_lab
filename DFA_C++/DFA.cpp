@@ -1,18 +1,16 @@
 /*
-  ...
+  Zadanie 1 - Automat deterministyczny
   Autor: Piotr Porembinski (253488)
   Poziom: ocena dobra
 */
 
 #include <iostream>
-#include <string>
 
 #include "AutomatDeterministyczny.h"
 
 int main()
 {
     AutomatDeterministyczny DFA;
-    std::string badany_ciag;
     char wczytany_znak;
     Symbole symbol_na_wejscie;
 
