@@ -68,6 +68,7 @@ public:
     AutomatNiedeterministyczny();
     void wykonaj_przejscie(Alfabet wczytany);
     void przedstaw_drzewo();
+    void wylistuj_aktualny_stan();
 };
 
 //===========================
@@ -104,6 +105,8 @@ int main()
             }
             std::cout << "Koniec analizy wyrazu" << std::endl;
             NFA.przedstaw_drzewo();
+            std::cout << "Stany automatu na koniec: ";
+            NFA.wylistuj_aktualny_stan();
             std::cout << "\n\n====\n====\n";
             
             //std::cout << ciag << std::endl;
@@ -384,5 +387,20 @@ void AutomatNiedeterministyczny::przedstaw_drzewo()
         }
         std::cout << std::endl;
     }
+    return;
+}
+
+void AutomatNiedeterministyczny::wylistuj_aktualny_stan()
+{
+    unsigned int x;
+    for (x = 0; x < aktualne_stany.size(); x++)
+    {
+        if (x > 0) 
+        {
+            std::cout << ", ";
+        }
+        std::cout << stan_tekstowo(aktualne_stany[x]);
+    }
+    std::cout << std::endl;
     return;
 }
