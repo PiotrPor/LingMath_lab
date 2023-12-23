@@ -316,13 +316,13 @@ Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz,
             break;
         }
         //stany gdzie juz wczytano 3 identyczne symbole jeden po drugim
-        case Stany::Q03: { nowy_stan = Stany::X; break; }
-        case Stany::Q13: { nowy_stan = Stany::X; break; }
-        case Stany::Q23: { nowy_stan = Stany::X; break; }
-        case Stany::Q33: { nowy_stan = Stany::X; break; }
-        case Stany::Qa3: { nowy_stan = Stany::X; break; }
-        case Stany::Qb3: { nowy_stan = Stany::X; break; }
-        case Stany::Qc3: { nowy_stan = Stany::X; break; }
+        case Stany::Q03: { nowy_stan = Stany::Q03; break; }
+        case Stany::Q13: { nowy_stan = Stany::Q13; break; }
+        case Stany::Q23: { nowy_stan = Stany::Q23; break; }
+        case Stany::Q33: { nowy_stan = Stany::Q33; break; }
+        case Stany::Qa3: { nowy_stan = Stany::Qa3; break; }
+        case Stany::Qb3: { nowy_stan = Stany::Qb3; break; }
+        case Stany::Qc3: { nowy_stan = Stany::Qc3; break; }
         default: { nowy_stan = Stany::X; }
     }
     return nowy_stan;
