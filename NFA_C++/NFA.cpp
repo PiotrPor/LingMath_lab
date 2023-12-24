@@ -11,26 +11,26 @@
 
 //===== ENUMERATORY =====
 
-enum Stany
+enum Stany //stany w jakich moze byc automat
 {
-    Qs,
-    Q01,
-    Q11,
-    Q21,
-    Q31,
-    Qa1,
-    Qb1,
+    Qs, //stan startowy
+    Q01, //stan gdy wykryto "0" raz
+    Q11, //stan gdy wykryto "1" raz
+    Q21, //...
+    Q31, //...
+    Qa1, //stan gdy wykryto "a" raz
+    Qb1, //...
     Qc1,
-    Q02,
-    Q12,
+    Q02, //stan gdy wykryto "0" dwa razy
+    Q12, //stan gdy wykryto "1" dwa razy
     Q22,
     Q32,
     Qa2,
     Qb2,
     Qc2,
-    Q03,
-    Q13,
-    Q23,
+    Q03, //stan gdy wykryto "0" trzy razy
+    Q13, //stan gdy wykryto "1" trzy razy
+    Q23, //...
     Q33,
     Qa3,
     Qb3,
@@ -38,37 +38,37 @@ enum Stany
     X //to nie stan automatu, pseudo-stan potrzebny do oznaczenia koncowki ucietej galezi
 };
 
-enum Alfabet
+enum Alfabet //alfabet nad ktorym zdefiniowano automat
 {
-    s0,
-    s1,
-    s2,
-    s3,
-    sA,
-    sB,
-    sC,
+    s0, //oznacza "0"
+    s1, // "1"
+    s2, // "2"
+    s3, // "3"
+    sA, // "a"
+    sB, // "b"
+    sC, // "c"
 };
 
-std::string stan_tekstowo(Stany ss);
-std::string symbol_tekstowo(Alfabet ss);
-bool czy_nalezy_do_alfabetu(char cs);
-Alfabet wczytaj_symbol(char cs);
-std::string lowercase_string(std::string str);
+std::string stan_tekstowo(Stany ss); //zapisze dany stan (wartosc enumeratora) jako tekst
+std::string symbol_tekstowo(Alfabet ss); //zapisze symbol alfabetu (warrtosc enumeratora) jako tekst
+bool czy_nalezy_do_alfabetu(char cs); //czy dany drukowalny znak nalezy do alfabetu
+Alfabet wczytaj_symbol(char cs); //zmienia drukowalny znak na symbol alfabetu (wartosc enumeratora)
+std::string lowercase_string(std::string str); //w string'u sprawia ze litery sa male ("A" -> "a")
 
 //===== KLASA =====
-class AutomatNiedeterministyczny
+class AutomatNiedeterministyczny //klasa symuluje funkcjonowanie Skonczonego Automatu Niedeterministycznego (NFA)
 {
 private:
-    std::vector<Stany> aktualne_stany;
-    std::vector<std::vector<Stany>> drzewo_przejsc;
-    void zakoncz_galaz(int indeks);
-    Stany nastepny_stan_wedlug_tablicy(Stany stan_teraz, Alfabet sym);
+    std::vector<Stany> aktualne_stany; //NFA moze byc w wiecej niz 1 stanie jednoczesnie (dlatego ma tablice o zmiennym rozmiarze)
+    std::vector<std::vector<Stany>> drzewo_przejsc; //tu zapisane jest drzewo przejsc jako tablica 2D (wiersze to galezie)
+    void zakoncz_galaz(int indeks); //funkcja do oznaczania w drzewie przejsc zakonczenia/uciecia galezi
+    Stany nastepny_stan_wedlug_tablicy(Stany stan_teraz, Alfabet sym); //z tablicy przejsc odczyta jaki ma byc nastepny stan
 public:
-    const Stany stan_poczatkowy = Stany::Qs;
-    AutomatNiedeterministyczny();
-    void wykonaj_przejscie(Alfabet wczytany);
-    void przedstaw_drzewo();
-    void wylistuj_aktualny_stan();
+    const Stany stan_poczatkowy = Stany::Qs; //stan  poczatkowy automatu
+    AutomatNiedeterministyczny(); //konstruktor bezparametrowy
+    void wykonaj_przejscie(Alfabet wczytany); //wykonaj przejscie na podstawie wczytanego symbolu alfabetu
+    void przedstaw_drzewo(); //przedstawi drzewo przejsc powstale podczas pracy automatu
+    void wylistuj_aktualny_stan(); //wypisze, w jakich stanach jest teraz NFA
 };
 
 //===========================
@@ -77,19 +77,20 @@ public:
 int main()
 {
     std::ifstream plik;
-    std::string ciag;
-    unsigned int x;
-    char znak;
-    bool nie_ma_bledu = true;
-    plik.open("plik_wejsciowy.txt");
-    if (plik.is_open())
+    std::string ciag; //to beda kolejne wyrazy odczytane z pliku
+    unsigned int x; //zmienna pomocnicza
+    char znak; //zmienna pomocnicza
+    bool nie_ma_bledu = true; //do oznaczenia bledu jesli wczyta sie symbol spoza alfabetu
+
+    plik.open("plik_wejsciowy.txt"); //otwiera plik do odczytu
+    if (plik.is_open()) //bedzie wykonywal czynnosci jesli poprawnie otwarto plik
     {
-        while (std::getline(plik, ciag, '#') && nie_ma_bledu)
+        while (std::getline(plik, ciag, '#') && nie_ma_bledu) //czytaj z pliku wyrazy (ciagi rozdzielone znakiem '#')
         {
-            ciag = lowercase_string(ciag);
+            ciag = lowercase_string(ciag); //zmien duze litery na male
             std::cout << "  Wyraz: " << ciag << std::endl;
-            AutomatNiedeterministyczny NFA;
-            for (x = 0; x < ciag.size(); x++)
+            AutomatNiedeterministyczny NFA; //stworz od nowa NFA
+            for (x = 0; x < ciag.size(); x++) //petla by wczytywac wyraz znak po znaku
             {
                 znak = ciag[x];
                 if (czy_nalezy_do_alfabetu(znak))
