@@ -69,6 +69,8 @@ public:
     void wykonaj_przejscie(Alfabet wczytany); //wykonaj przejscie na podstawie wczytanego symbolu alfabetu
     void przedstaw_drzewo(); //przedstawi drzewo przejsc powstale podczas pracy automatu
     void wylistuj_aktualny_stan(); //wypisze, w jakich stanach jest teraz NFA
+    bool czy_potrojenie_nastapilo_wsrod_cyfr(); //czy w badanym wyrazie jest jakas potrojona cyfra (z alfabetu)
+    bool czy_potrojenie_nastapilo_wsrod_liter(); //czy w badanym wyrazie jest jakas potrojona litera (z alfabetu)
 };
 
 //===========================
@@ -81,6 +83,7 @@ int main()
     unsigned int x; //zmienna pomocnicza
     char znak; //zmienna pomocnicza
     bool nie_ma_bledu = true; //do oznaczenia bledu jesli wczyta sie symbol spoza alfabetu
+    bool trzy_wsrod_cyfr, trzy_wsrod_liter; //przyda sie przy stwierdzaniu czy w wyrazie jakis znak jest potrojony
 
     plik.open("plik_wejsciowy.txt"); //otwiera plik do odczytu
     if (plik.is_open()) //bedzie wykonywal czynnosci jesli poprawnie otwarto plik
@@ -110,7 +113,22 @@ int main()
             NFA.przedstaw_drzewo(); //wyipsze drzewo przejsc powstale z analizy wyrazu (wiersze to kolejne galezie)
             std::cout << "Stany automatu na koniec: ";
             NFA.wylistuj_aktualny_stan(); //wypisze liste stanow, w ktorych jest na koniec automat
-            std::cout << "\n\n====\n====\n";
+            trzy_wsrod_cyfr = NFA.czy_potrojenie_nastapilo_wsrod_cyfr();
+            trzy_wsrod_liter = NFA.czy_potrojenie_nastapilo_wsrod_liter();
+            if (trzy_wsrod_cyfr || trzy_wsrod_liter) //jesli w wyrazie bylo potrojenie to napisze o tym
+            {
+                std::cout << "W wyrazie bylo potrojenie wsrod ";
+                if (trzy_wsrod_cyfr) { std::cout << "cyfr"; }
+                if (trzy_wsrod_cyfr && trzy_wsrod_liter) { std::cout << " i "; }
+                if (trzy_wsrod_liter) { std::cout << "liter"; }
+                std::cout << std::endl;
+            }
+            else
+            {
+                //o braku potrojenia jakiegos znaku tez napisze
+                std::cout << "W wyrazie nie bylo potrojenia zadnego symbolu" << std::endl;
+            }
+            std::cout << "\n\n====\n====\n"; //widoczna przerwa przed wypisaniem informacji o kolejnym wyrazie z pliku
         }
     }
     plik.close(); //zamyka plik, bo zakonczyl uzywanie go (czytanie z niego)
@@ -413,4 +431,37 @@ void AutomatNiedeterministyczny::wylistuj_aktualny_stan() //wypisz tesktowostany
     }
     std::cout << std::endl;
     return;
+}
+
+//na podstawie stanow NFA stwierdzi czy badanym wyrazie jakas cyfra byla potrojona
+bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_cyfr()
+{
+    bool czy_jest_trojka = false;
+    unsigned int x;
+    for (x = 0; x < aktualne_stany.size(); x++) //przeszukuje liste aktualnych stanow automatu
+    {
+        if (aktualne_stany[x] == Stany::Q03 || aktualne_stany[x] == Stany::Q13 || 
+            aktualne_stany[x] == Stany::Q23 || aktualne_stany[x] == Stany::Q33)
+        {
+            czy_jest_trojka = true;
+            break;
+        }
+    }
+    return czy_jest_trojka;
+}
+
+//na podstawie stanow NFA stwierdzi czy badanym wyrazie jakas litera byla potrojona
+bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_liter()
+{
+    bool czy_jest_3 = false;
+    unsigned int x;
+    for (x = 0; x < aktualne_stany.size(); x++) //przeszukuje liste aktualnych stanow automatu
+    {
+        if (aktualne_stany[x] == Stany::Qa3 || aktualne_stany[x] == Stany::Qb3 || aktualne_stany[x] == Stany::Qc3)
+        {
+            czy_jest_3 = true;
+            break;
+        }
+    }
+    return czy_jest_3;
 }
