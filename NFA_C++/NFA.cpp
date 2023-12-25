@@ -100,6 +100,8 @@ int main()
                 {
                     //jesli tak, to automat wykona przejscie na podstawie tego symbolu
                     NFA.wykonaj_przejscie(wczytaj_symbol(znak));
+                    std::cout << "Po wczytaniu \"" << znak << "\" automat jest w stanach: ";
+                    NFA.wylistuj_aktualny_stan();
                 }
                 else
                 {
