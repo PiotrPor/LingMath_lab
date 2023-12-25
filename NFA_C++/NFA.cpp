@@ -110,7 +110,7 @@ int main()
                 }
             }
             std::cout << "Koniec analizy wyrazu" << std::endl;
-            NFA.przedstaw_drzewo(); //wyipsze drzewo przejsc powstale z analizy wyrazu (wiersze to kolejne galezie)
+            NFA.przedstaw_drzewo(); //wypisze drzewo przejsc powstale z analizy wyrazu (wiersze to kolejne galezie)
             std::cout << "Stany automatu na koniec: ";
             NFA.wylistuj_aktualny_stan(); //wypisze liste stanow, w ktorych jest na koniec automat
             trzy_wsrod_cyfr = NFA.czy_potrojenie_nastapilo_wsrod_cyfr();
@@ -433,7 +433,7 @@ void AutomatNiedeterministyczny::wylistuj_aktualny_stan() //wypisz tesktowostany
     return;
 }
 
-//na podstawie stanow NFA stwierdzi czy badanym wyrazie jakas cyfra byla potrojona
+//na podstawie stanow NFA stwierdzi czy w badanym wyrazie jakas cyfra byla potrojona
 bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_cyfr()
 {
     bool czy_jest_trojka = false;
@@ -450,7 +450,7 @@ bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_cyfr()
     return czy_jest_trojka;
 }
 
-//na podstawie stanow NFA stwierdzi czy badanym wyrazie jakas litera byla potrojona
+//na podstawie stanow NFA stwierdzi czy w badanym wyrazie jakas litera byla potrojona
 bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_liter()
 {
     bool czy_jest_3 = false;
