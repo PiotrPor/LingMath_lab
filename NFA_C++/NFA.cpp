@@ -92,32 +92,34 @@ int main()
             AutomatNiedeterministyczny NFA; //stworz od nowa NFA
             for (x = 0; x < ciag.size(); x++) //petla by wczytywac wyraz znak po znaku
             {
-                znak = ciag[x];
-                if (czy_nalezy_do_alfabetu(znak))
+                znak = ciag[x]; //w zmiennej typu "char" jest jeden znak (cyfra lub litera)
+                if (czy_nalezy_do_alfabetu(znak)) //czy wczytany znak nalezy do alfabetu
                 {
+                    //jesli tak, to automat wykona przejscie na podstawie tego symbolu
                     NFA.wykonaj_przejscie(wczytaj_symbol(znak));
                 }
                 else
                 {
+                    //jesli nien to wypisz komunikat o bledzie i zakoncz prace nad tym wyrazem
                     std::cout << "   Wczytany znak \"" << znak << "\" nie nalezy do alfabetu" << std::endl;
                     nie_ma_bledu = false;
                     break;
                 }
             }
             std::cout << "Koniec analizy wyrazu" << std::endl;
-            NFA.przedstaw_drzewo();
+            NFA.przedstaw_drzewo(); //wyipsze drzewo przejsc powstale z analizy wyrazu (wiersze to kolejne galezie)
             std::cout << "Stany automatu na koniec: ";
-            NFA.wylistuj_aktualny_stan();
+            NFA.wylistuj_aktualny_stan(); //wypisze liste stanow, w ktorych jest na koniec automat
             std::cout << "\n\n====\n====\n";
         }
     }
-    plik.close();
+    plik.close(); //zamyka plik, bo zakonczyl uzywanie go (czytanie z niego)
     return 0;
 }
 
 //===== FUNKCJE =====
 
-std::string stan_tekstowo(Stany ss)
+std::string stan_tekstowo(Stany ss) //nazwe stanu wypisze tekstowo
 {
     switch (ss)
     {
@@ -147,7 +149,7 @@ std::string stan_tekstowo(Stany ss)
     }
 }
 
-std::string symbol_tekstowo(Alfabet ss)
+std::string symbol_tekstowo(Alfabet ss) //stan (wartosc enumeratora) bedzie napisany jako drukowalny znak
 {
     switch (ss)
     {
@@ -162,7 +164,7 @@ std::string symbol_tekstowo(Alfabet ss)
     }
 }
 
-bool czy_nalezy_do_alfabetu(char cs)
+bool czy_nalezy_do_alfabetu(char cs) //czy podany znak (zmienna typu "char") nalezy do alfabetu
 {
     bool czy_nalezy;
     if (cs == '0' || cs == '1' || cs == '2' || cs == '3') { czy_nalezy = true; }
@@ -171,7 +173,7 @@ bool czy_nalezy_do_alfabetu(char cs)
     return czy_nalezy;
 }
 
-Alfabet wczytaj_symbol(char cs)
+Alfabet wczytaj_symbol(char cs) //przetlumaczy znak drukowalny na wartosc enumeratora (o ile znak nalezy do alfabetu)
 {
     Alfabet drukowalny_jako_symbol;
     switch (cs)
@@ -187,19 +189,19 @@ Alfabet wczytaj_symbol(char cs)
     return drukowalny_jako_symbol;
 }
 
-std::string lowercase_string(std::string str)
+std::string lowercase_string(std::string str) //w string'u zmienia duze litery na male
 {
-    std::string with_lowercase;
+    std::string with_lowercase; //nowy string, w nim litery beda male
     unsigned int x;
     char letter_or_not;
-    for (x = 0; x < str.length(); x++)
+    for (x = 0; x < str.length(); x++) //czyta podany string znak po znaku
     {
         letter_or_not = str[x];
-        if (std::isalpha(letter_or_not) && !std::isdigit(letter_or_not))
+        if (std::isalpha(letter_or_not) && !std::isdigit(letter_or_not)) //jesli jest alfanumeryczny i nie jest to cyfra
         {
-            letter_or_not = (char)std::tolower((int)letter_or_not);
+            letter_or_not = (char)std::tolower((int)letter_or_not); //odpowiednik duzej litery wsrod malych liter
         }
-        with_lowercase.push_back(letter_or_not);
+        with_lowercase.push_back(letter_or_not); //dopisz znak do nowego string'a
     }
     return with_lowercase;
 }
@@ -208,16 +210,17 @@ std::string lowercase_string(std::string str)
 
 void AutomatNiedeterministyczny::zakoncz_galaz(int indeks)
 {
-    drzewo_przejsc[indeks].push_back(Stany::X);
+    drzewo_przejsc[indeks].push_back(Stany::X); //na koncu galezi dopisuje roboczy stan, ktory potem sluzy do rozpoznania konca galezi
     return;
 }
 
+//parametrem wejsciowym jest aktualny stan automatu, oraz wczytany symbol
 Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz, Alfabet sym)
 {
     Stany nowy_stan;
-    switch (stan_teraz)
+    switch (stan_teraz) //podejmuje decyzje na podstawie wczytanego symbolu
     {
-        case Stany::Qs:
+        case Stany::Qs: //jesli teraz automat jest w stanie "Qs" (stan poczatkowy)
         {
             switch (sym)
             {
@@ -231,13 +234,15 @@ Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz,
             }
             break;
         }
-        case Stany::Q01:
+        case Stany::Q01: //jesli automat jest teraz w stanie Q01 (raz napotkane znak '1')
         {
+            //jesli jest stan Q01 i wczytano symbol '0' to przejdzie do Q02 (bo juz sa dwa wczytane '0')
+            //inaczej obetnie galaz
             if (sym == Alfabet::s0) { nowy_stan = Stany::Q02; }
             else { nowy_stan = Stany::X; }
             break;
         }
-        case Stany::Q11:
+        case Stany::Q11: //jesli automat jest w stanie Q11
         {
             if (sym == Alfabet::s1) { nowy_stan = Stany::Q12; }
             else { nowy_stan = Stany::X; }
@@ -273,14 +278,13 @@ Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz,
             else { nowy_stan = Stany::X; }
             break;
         }
-        //-----------------------------------
-        case Stany::Q02:
+        case Stany::Q02: //jesli jest w stanie Q02 (bo juz wczytano dwa razy symbol '0')
         {
             if (sym == Alfabet::s0) { nowy_stan = Stany::Q03; }
             else { nowy_stan = Stany::X; }
             break;
         }
-        case Stany::Q12:
+        case Stany::Q12: //jesli jestw w stanie Q12 (bo juz wczytano dwa razy symbol '1')
         {
             if (sym == Alfabet::s1) { nowy_stan = Stany::Q13; }
             else { nowy_stan = Stany::X; }
@@ -326,50 +330,53 @@ Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz,
         case Stany::Qc3: { nowy_stan = Stany::Qc3; break; }
         default: { nowy_stan = Stany::X; }
     }
-    return nowy_stan;
+    return nowy_stan; //zwraca stan, do ktorego przejdzie automat w ramach danej galezi drzewa przejsc
 }
 
-AutomatNiedeterministyczny::AutomatNiedeterministyczny()
+AutomatNiedeterministyczny::AutomatNiedeterministyczny() //konstruktor bezparametrowy
 {
     aktualne_stany.clear();
-    aktualne_stany.push_back(stan_poczatkowy);
+    aktualne_stany.push_back(stan_poczatkowy); //automat na poczatku jest w stanie poczatkowym
     std::vector<Stany> punkt_startu = { Stany::Qs };
-    drzewo_przejsc.push_back(punkt_startu);
+    drzewo_przejsc.push_back(punkt_startu); //drzewo przejsc zaczyna sie od stanu poczatkowego
 }
 
-void AutomatNiedeterministyczny::wykonaj_przejscie(Alfabet wczytany)
+void AutomatNiedeterministyczny::wykonaj_przejscie(Alfabet wczytany) //NFA wczytal symbol i na jego podstawie ma wykonac przejscie
 {
     unsigned int x, rozmiar;
     Stany nowy_stan, stan_na_koncu_galezi;
     rozmiar = drzewo_przejsc.size();
-    for (x = 0; x < rozmiar; x++)
+    for (x = 0; x < rozmiar; x++) //automat wykona przejscie na kazdej galezi drzewa przejsc
     {
-        stan_na_koncu_galezi = drzewo_przejsc[x].back();
-        if (stan_na_koncu_galezi != Stany::X)
+        stan_na_koncu_galezi = drzewo_przejsc[x].back(); //decyzja jest podejmowana na podstawie ostatniego stanu zapisanego na galezi
+        if (stan_na_koncu_galezi != Stany::X) //jesli galez nie jest ucieta/zakonczona
         {
-            nowy_stan = nastepny_stan_wedlug_tablicy(stan_na_koncu_galezi, wczytany);
-            drzewo_przejsc[x].push_back(nowy_stan);
+            nowy_stan = nastepny_stan_wedlug_tablicy(stan_na_koncu_galezi, wczytany); //jaki ma byc nowy stan (na podstawie tablicy przejsc)
+            drzewo_przejsc[x].push_back(nowy_stan); //dopisz nowy stan na koncu galezi (moze to byc tez pseudo-stan oznaczajacy obciecie galezi)
         }
     }
-    if (drzewo_przejsc.back().at(0) == Stany::Qs)
+    if (drzewo_przejsc.back().at(0) == Stany::Qs) //jesli ostatnie galaz zaczyna sie od Qs (stanu poczatkowego)
     {
         std::vector<Stany> nastepna_galaz;
         nastepna_galaz.push_back(Stany::Qs);
-        drzewo_przejsc.push_back(nastepna_galaz);
+        drzewo_przejsc.push_back(nastepna_galaz); //doklej na koncu drzewa nowa galaz zaczynajaca sie od stanu poczatkowego 
     }
     rozmiar = drzewo_przejsc.size();
     std::vector<Stany> nowe_aktualne_stany;
-    for (x = 0; x < rozmiar; x++)
+    for (x = 0; x < rozmiar; x++) //posprawdza koncowki galezi drzewa, by wiedziec w jakich stanach jest automat
     {
         if (drzewo_przejsc[x].back() != Stany::X)
         {
             nowe_aktualne_stany.push_back(drzewo_przejsc[x].back());
         }
     }
-    aktualne_stany = nowe_aktualne_stany;
+    aktualne_stany = nowe_aktualne_stany; //nowa zaktualizowana lista stanow automatu
     return;
 }
 
+//tekstowo przedstaw drzewo przejsc
+//kolejne wiersze/linijki to galezie
+//kolejne stany z galezi wpisywane sa od lewej do prawej
 void AutomatNiedeterministyczny::przedstaw_drzewo()
 {
     unsigned int a, b;
@@ -378,11 +385,14 @@ void AutomatNiedeterministyczny::przedstaw_drzewo()
         for (b = 0; b < drzewo_przejsc[a].size(); b++)
         {
             if (b > 0) 
-            { std::cout << " -> "; }
+            { std::cout << " -> "; } //miedzy kolejnymi stanami jest strzalka (bo NFA przechodzil od stanu do stanu)
             std::cout << stan_tekstowo(drzewo_przejsc[a][b]);
         }
         if (a < (drzewo_przejsc.size() - 1))
         {
+            //miedzzy kolejnymi galeziami jest linia laczaca
+            //wedlug tabeli przejsc przy kazdym wczytanym symbolu nie tylko przechodzi sie do Q01, Q02, .., Qc1
+            //ale tez powstaje nowa galaz zaczynajaca sie od Qs
             std::cout << std::endl << "|";
         }
         std::cout << std::endl;
@@ -390,7 +400,7 @@ void AutomatNiedeterministyczny::przedstaw_drzewo()
     return;
 }
 
-void AutomatNiedeterministyczny::wylistuj_aktualny_stan()
+void AutomatNiedeterministyczny::wylistuj_aktualny_stan() //wypisz tesktowostany z listy stanow w jakich jest automat
 {
     unsigned int x;
     for (x = 0; x < aktualne_stany.size(); x++)
