@@ -48,16 +48,21 @@ public:
 };
 
 //===== FUNKCJA =====
-
+std::string stan_tekstowo(Stany st);
+std::string ruch_tekstowo(Ruch r);
+std::string decyzja_jako_tekst(Decyzja DD);
 
 //================
 //===== MAIN =====
 
 int main()
 {
-    std::string liczba_binarna = "o1001";
+    std::string liczba_binarna;
     std::string zwiekszona_liczba;
     MaszynaTuringa MT;
+    //
+    std::cout << "Wpisz \'o\' a potem liczbe binarna: ";
+    std::getline(std::cin, liczba_binarna);
     //
     std::cout << "Tasma przed: " << liczba_binarna << std::endl;
     zwiekszona_liczba = MT.dodaj_trzy(liczba_binarna);
@@ -75,13 +80,15 @@ MaszynaTuringa::MaszynaTuringa()
 std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
 {
     std::string zwiekszona = liczba;
-    unsigned int dlugosc = liczba.size();
+    //unsigned int dlugosc = liczba.size();
     unsigned int x;
     Decyzja co_zrobi;
-    x = dlugosc-1;
+    //x = dlugosc-1;
+    x = liczba.size() - 1;
     while (x >= 0)
     {
         co_zrobi = this->podejmij_decyzje(zwiekszona[x]);
+        std::cout << "Napotkano symbol " << zwiekszona[x] << std::endl;
         //stan
         if (co_zrobi.nowy_stan != Stany::pusty)
         {
@@ -106,6 +113,8 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
             if (co_zrobi.ruch == Ruch::R) { x++; }
             else { x--; }
         }
+        //
+        std::cout << "   " << decyzja_jako_tekst(co_zrobi) << std::endl;
         //zakoncz petle
         if (co_zrobi.nowy_stan == Stany::pusty &&
             co_zrobi.wpisywany_symbol == nic_nie_pisz && 
@@ -118,15 +127,6 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
     return zwiekszona;
 }
 
-/*
-    | 0 | 1 | Θ
-Qs | Q0, 1, L | Q1, 0, L | Q0, 1, L
-Q0 | Q2, 1, L | Q3, 0, L | Q2, 1, L
-Q1 | Q3, -, L | Q3, -, L | Q3, 0, L
-Q2 | -, -, L | -, -, L | -, -, -
-Q3 | Q2, 1, L | -, 0, L | Q2, 1, -
-Qe
-*/
 Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
 {
     Decyzja co_robic;
@@ -185,3 +185,61 @@ Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
 
 
 //===== FUNKCJE =====
+
+std::string stan_tekstowo(Stany st)
+{
+    switch (st)
+    {
+        case Stany::Qs: {return "Qs"; break; }
+        case Stany::Q0: {return "Q0"; break; }
+        case Stany::Q1: {return "Q1"; break; }
+        case Stany::Q2: {return "Q2"; break; }
+        case Stany::Q3: {return "Q3"; break; }
+        default: {return "[none]"; }
+    }
+}
+
+std::string ruch_tekstowo(Ruch r)
+{
+    switch (r)
+    {
+        case Ruch::L: {return "w lewo"; break; }
+        case Ruch::R: {return "w prawo"; break; }
+        default: {return "[none]"; }
+    }
+}
+
+std::string decyzja_jako_tekst(Decyzja DD)
+{
+    std::string opis = "";
+    if (DD.nowy_stan != Stany::pusty)
+    {
+        opis += "Przechodzi do stanu " + stan_tekstowo(DD.nowy_stan);
+    }
+    else
+    {
+        opis += "Nie zmienia stanu";
+    }
+    opis += ". ";
+    if (DD.wpisywany_symbol != nic_nie_pisz)
+    {
+        opis += "Wpisuje \"";
+        opis.append(1, DD.wpisywany_symbol); //dopisz raz ten 'char'
+        opis += "\" na tasme";
+    }
+    else
+    {
+        std::cout << "Nie wpisuje symbolu na tasme";
+    }
+    opis += ". ";
+    if (DD.ruch != Ruch::nic)
+    {
+        opis += "Przesuwa glowice " + ruch_tekstowo(DD.ruch);
+    }
+    else
+    {
+        opis += "Glowica nie rusza sie";
+    }
+    opis += ".";
+    return opis;
+}
