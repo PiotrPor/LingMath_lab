@@ -1,4 +1,4 @@
-/*
+﻿/*
   Zadanie 3 - Maszyna Turinga
   Autor: Piotr Porembinski (253488)
   Poziom trudnosci na ocene 4
@@ -100,6 +100,15 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
     return zwiekszona;
 }
 
+/*
+    | 0 | 1 | Θ
+Qs | Q0, 1, L | Q1, 0, L | Q0, 1, L
+Q0 | Q2, 1, L | Q3, 0, L | Q2, 1, L
+Q1 | Q3, -, L | Q3, -, L | Q3, 0, L
+Q2 | -, -, L | -, -, L | -, -, -
+Q3 | Q2, 1, L | -, 0, L | Q2, 1, -
+Qe
+*/
 Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
 {
     Decyzja co_robic;
