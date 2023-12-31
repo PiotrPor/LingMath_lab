@@ -7,112 +7,115 @@
 #include <string>
 
 //===== ENUMERATORY I STRUKTURY =====
-enum Ruch
+enum Ruch //oznacza, jaki ruch glowicy ma wykonac Maszyna Turinga
 {
     R,
     L,
-    nic
+    nic //aby oznaczyc brak ruchu
 };
 
-enum Stany
+enum Stany //oznacza stany, w ktorych moze byc Maszyna
 {
-    Qs,
-    Q0,
-    Q1,
-    Q2,
-    Q3,
+    Qs, //stan poczatkowy
+    Q0, //stan, gdy dodano juz pierwsze "1" i w pamieci nie ma "1"
+    Q1, //stan, gdy dodano juz pierwsze "1" i w pamieci jest "1"
+    Q2, //stan, gdy dodano juz dwa "1" i w pamieci nie ma "1"
+    Q3, //stan, gdy dodano juz dwa "1" i w pamieci jest "1"
     pusty
 };
 
-const char Alfabet[] = {'0','1','o'};
-const char nic_nie_pisz = '-';
+const char Alfabet[] = {'0','1','o'}; // "o" oznacza u mnie koniec tasmy
+const char nic_nie_pisz = '-'; //do oznaczania, ze nic sie wpisuje natasme
 
-struct Decyzja
+struct Decyzja //aby mozna jednym obiektem opisac dzialanie, ktore podejmie Maszyna po wczytaniu symbolu
 {
-    Stany nowy_stan;
-    char wpisywany_symbol;
-    Ruch ruch;
+    Stany nowy_stan; //w jaki stan ma przejsc
+    char wpisywany_symbol; //jaki symbol ma wpisac na tasme
+    Ruch ruch; //jaki ruch ma wykonac
 };
 
 //===== KLASA =====
-class MaszynaTuringa
+class MaszynaTuringa //obiekt tej klasy bedzie Maszyna Turinga, ktora bedzie wykonywac ooperacje na tasmie
 {
 private:
-    Stany aktualny_stan;
+    Stany aktualny_stan; //w jakim stanie jest
 public:
     const Stany stan_poczatkowy = Stany::Qs;
-    MaszynaTuringa();
-    std::string dodaj_trzy(std::string liczba);
-    Decyzja podejmij_decyzje(char ss);
+    MaszynaTuringa(); //konstruktor bezparametrowy
+    std::string dodaj_trzy(std::string liczba); //do podanej liczby binarnej doda 3 i zwroci wynik (liczby jako string'i)
+    Decyzja podejmij_decyzje(char ss); //na podstawie tablicy przejsc podejmie decyzje przy wczytaniu danego symbolu
 };
 
 //===== FUNKCJA =====
-std::string stan_tekstowo(Stany st);
-std::string ruch_tekstowo(Ruch r);
-std::string decyzja_jako_tekst(Decyzja DD);
+std::string stan_tekstowo(Stany st); //stan (jako wartosc enumeratora) przedstawiony tekstowo
+std::string ruch_tekstowo(Ruch r); //ruch (jako wartosc enumeratora) przedstawiony tekstowo
+std::string decyzja_jako_tekst(Decyzja DD); //zwraca tekstowy opis decyzji
 
 //================
 //===== MAIN =====
 
 int main()
 {
-    std::string liczba_binarna;
-    std::string zwiekszona_liczba;
-    MaszynaTuringa MT;
+    std::string liczba_binarna; //to bedzie liczba binarna podana przez uzytkownika
+    std::string zwiekszona_liczba; //to bedzie wynik dodania 3 do podanej liczby binarnej
+    MaszynaTuringa MT; //instancja Maszyny Turinga, ktora doda 3 do liczby
     //
     std::cout << "Wpisz \'o\' a potem liczbe binarna: ";
-    std::getline(std::cin, liczba_binarna);
+    std::getline(std::cin, liczba_binarna); //pobranie linijki tekstu z wejscia (terminal) do string'a
     //
     std::cout << "Tasma przed: " << liczba_binarna << std::endl;
-    zwiekszona_liczba = MT.dodaj_trzy(liczba_binarna);
-    std::cout << "Tasma po: " << zwiekszona_liczba << std::endl;
+    zwiekszona_liczba = MT.dodaj_trzy(liczba_binarna); //Maszyna Turinga zwieksza liczbe o 3 i tekstowo wpisuje wynik do string'a
+    std::cout << "Tasma po: " << zwiekszona_liczba << std::endl; //wypisanie wyniku
     return 0;
 }
 
 //===== KLASA =====
 
-MaszynaTuringa::MaszynaTuringa()
+MaszynaTuringa::MaszynaTuringa() //konstruktor bezparametrowy
 {
-    aktualny_stan = stan_poczatkowy;
+    aktualny_stan = stan_poczatkowy; //Maszyna Turinga zaczyna w stanie poczatkowym
 }
 
+//jako parametr przyjmuje liczbe binarna (zapisana jako string)
+//doda do niej 3
+//wynik zwraca jako string
 std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
 {
-    std::string zwiekszona = liczba;
-    unsigned int x;
-    Decyzja co_zrobi;
+    std::string zwiekszona = liczba; //to bedzie wynik dzialania. To tasma dla Maszyny Turinga
+    unsigned int x; //potrzebne przy petli
+    Decyzja co_zrobi; //tu beda wpisywane decyzje podjete na podstawie tablicy przejsc
     x = liczba.size() - 1;
     while (x >= 0)
     {
-        co_zrobi = this->podejmij_decyzje(zwiekszona[x]);
+        co_zrobi = this->podejmij_decyzje(zwiekszona[x]); //wczytuje symbol z tasmy i podejmuje decyzje
         std::cout << "Napotkano symbol " << zwiekszona[x] << std::endl;
-        //stan
-        if (co_zrobi.nowy_stan != Stany::pusty)
+        //w jaki stan ma przejsc
+        if (co_zrobi.nowy_stan != Stany::pusty) //jesli nie jest tak, ze nie zmienia stanu
         {
             this->aktualny_stan = co_zrobi.nowy_stan;
         }
-        //symbol wpisany na tasme
-        if (co_zrobi.wpisywany_symbol != nic_nie_pisz)
+        //jaki symbol ma wpisac na tasme
+        if (co_zrobi.wpisywany_symbol != nic_nie_pisz) //jesli nie jest tak, ze nic nie wpisuje
         {
             zwiekszona[x] = co_zrobi.wpisywany_symbol;
         }
-        //ruch
-        if (x == 0)
+        //jaki ruch ma wykonac glowica
+        if (x == 0) //jesli glowica jest juz na koncu tasmy (ruch od prawej do lewej)
         {
             if (zwiekszona[x] != Alfabet[2]) //jesli to nie symbol konca tasmy
             {
-                zwiekszona.insert(0, "o");
-                x++;
+                zwiekszona.insert(0, "o"); //jeszcze bardziej na lewo dopisz symbol konca tasmy
+                x++; //tym samym nie jestesmy juz na koncu tasmy
             }
         }
-        if (co_zrobi.ruch != Ruch::nic)
+        if (co_zrobi.ruch != Ruch::nic) //jesli nie jest tak, ze nie ma wykonac ruchu
         {
             if (co_zrobi.ruch == Ruch::R) { x++; }
             else { x--; }
         }
-        //
+        //tekstowe opisanie decyzji, ktora wlasnie zostala podjeta i zrealizowana
         std::cout << "   " << decyzja_jako_tekst(co_zrobi) << std::endl;
-        //zakoncz petle
+        //zakoncz petle jesli glowica nie bedzie juz nic robic i jest na koncu tasmy
         if (co_zrobi.nowy_stan == Stany::pusty &&
             co_zrobi.wpisywany_symbol == nic_nie_pisz && 
             co_zrobi.ruch == Ruch::nic && 
@@ -121,29 +124,32 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
             break;
         }
     }
-    return zwiekszona;
+    return zwiekszona; //zwraca tekstowo tasme (wynik dzialania)
 }
 
+//przyjmuje wczytany symbol jako parametr
+//uwzgledni w decyzji rowniez aktualny stan Maszyny
+//jako wynik zwroci podjeta decyzje
 Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
 {
     Decyzja co_robic;
     switch (aktualny_stan)
     {
-        case Stany::Qs:
+        case Stany::Qs: //jesli teraz Maszyna jest w stanie Qs
         {
-            if (ss == Alfabet[0]) { co_robic = {Stany::Q0, Alfabet[1], Ruch::L}; }
-            else if (ss == Alfabet[1]) { co_robic = { Stany::Q1, Alfabet[0], Ruch::L }; }
-            else { co_robic = { Stany::Q0, Alfabet[1], Ruch::L }; }
+            if (ss == Alfabet[0]) { co_robic = {Stany::Q0, Alfabet[1], Ruch::L}; } //jesli wczytal "0"
+            else if (ss == Alfabet[1]) { co_robic = { Stany::Q1, Alfabet[0], Ruch::L }; } //jesli wczytal "1"
+            else { co_robic = { Stany::Q0, Alfabet[1], Ruch::L }; } //jesli wczytal symbol konca tasmy
             break;
         }
-        case Stany::Q0:
+        case Stany::Q0: //jesli Maszyna jest w stanie Q0
         {
             if (ss == Alfabet[0]) { co_robic = { Stany::Q2, Alfabet[1], Ruch::L }; }
             else if (ss == Alfabet[1]) { co_robic = { Stany::Q3, Alfabet[0], Ruch::L }; }
             else { co_robic = { Stany::Q2, Alfabet[1], Ruch::L }; }
             break;
         }
-        case Stany::Q1:
+        case Stany::Q1: //jesli Maszyna jest w stanie Q1
         {
             if (ss == Alfabet[0]) { co_robic = { Stany::Q3, nic_nie_pisz, Ruch::L }; }
             else if (ss == Alfabet[1]) { co_robic = { Stany::Q3, nic_nie_pisz, Ruch::L }; }
@@ -170,13 +176,13 @@ Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
             break;
         }
     }
-    return co_robic;
+    return co_robic; //zwraca decyzje
 }
 
 
 //===== FUNKCJE =====
 
-std::string stan_tekstowo(Stany st)
+std::string stan_tekstowo(Stany st) //zwraca stan (wartosc enumeratora) jako tekst (string)
 {
     switch (st)
     {
@@ -189,7 +195,7 @@ std::string stan_tekstowo(Stany st)
     }
 }
 
-std::string ruch_tekstowo(Ruch r)
+std::string ruch_tekstowo(Ruch r) //zwraca kierunek/rodzaj ruchu (wartosc enumeratora) jako tekst (string)
 {
     switch (r)
     {
@@ -199,10 +205,10 @@ std::string ruch_tekstowo(Ruch r)
     }
 }
 
-std::string decyzja_jako_tekst(Decyzja DD)
+std::string decyzja_jako_tekst(Decyzja DD) //zwraca tesktowy czytelny opis decyzji
 {
-    std::string opis = "";
-    if (DD.nowy_stan != Stany::pusty)
+    std::string opis = ""; //pusty string. Bede do niego dodawal 3 zdania
+    if (DD.nowy_stan != Stany::pusty) //najpierw zdanie o nowym stanie. Inne jesli nie ma zmiany stanu
     {
         opis += "Przechodzi do stanu " + stan_tekstowo(DD.nowy_stan);
     }
@@ -210,19 +216,19 @@ std::string decyzja_jako_tekst(Decyzja DD)
     {
         opis += "Nie zmienia stanu";
     }
-    opis += ". ";
+    opis += ". "; //kropka i po niej nastepne zdanie
     if (DD.wpisywany_symbol != nic_nie_pisz)
     {
         opis += "Wpisuje \"";
-        opis.append(1, DD.wpisywany_symbol); //dopisz raz ten 'char'
+        opis.append(1, DD.wpisywany_symbol); // "dopisz raz ten 'char' na koniec string'a"
         opis += "\" na tasme";
     }
     else
     {
         std::cout << "Nie wpisuje symbolu na tasme";
     }
-    opis += ". ";
-    if (DD.ruch != Ruch::nic)
+    opis += ". "; //kropka i po niej ostatnie (trzecie) zdanie
+    if (DD.ruch != Ruch::nic) //zdanie rozne zaleznie od tego, czy glowica wykona ruch czy nie
     {
         opis += "Przesuwa glowice " + ruch_tekstowo(DD.ruch);
     }
@@ -231,5 +237,5 @@ std::string decyzja_jako_tekst(Decyzja DD)
         opis += "Glowica nie rusza sie";
     }
     opis += ".";
-    return opis;
+    return opis; //zwraca opis (teraz to juz 3 zdania w jednym wierszu)
 }
