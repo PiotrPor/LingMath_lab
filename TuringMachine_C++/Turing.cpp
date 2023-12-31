@@ -21,7 +21,6 @@ enum Stany
     Q1,
     Q2,
     Q3,
-    Qe,
     pusty
 };
 
@@ -80,10 +79,8 @@ MaszynaTuringa::MaszynaTuringa()
 std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
 {
     std::string zwiekszona = liczba;
-    //unsigned int dlugosc = liczba.size();
     unsigned int x;
     Decyzja co_zrobi;
-    //x = dlugosc-1;
     x = liczba.size() - 1;
     while (x >= 0)
     {
@@ -160,18 +157,11 @@ Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
             else { co_robic = { Stany::pusty, nic_nie_pisz, Ruch::nic }; }
             break;
         }
-        case Stany::Q3: //todo
+        case Stany::Q3:
         {
             if (ss == Alfabet[0]) { co_robic = { Stany::Q2, Alfabet[1], Ruch::L }; }
             else if (ss == Alfabet[1]) { co_robic = { Stany::pusty, Alfabet[0], Ruch::L }; }
             else { co_robic = { Stany::Q2, Alfabet[1], Ruch::nic }; }
-            break;
-        }
-        case Stany::Qe: //todo
-        {
-            if (ss == Alfabet[0]) { co_robic = { Stany::pusty, nic_nie_pisz, Ruch::nic }; }
-            else if (ss == Alfabet[1]) { co_robic = { Stany::pusty, nic_nie_pisz, Ruch::nic }; }
-            else { co_robic = { Stany::pusty, nic_nie_pisz, Ruch::nic }; }
             break;
         }
         default:
