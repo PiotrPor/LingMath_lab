@@ -5,6 +5,7 @@
 */
 #include <iostream>
 #include <string>
+#include <vector>
 
 //===== ENUMERATORY I STRUKTURY =====
 enum Ruch //oznacza, jaki ruch glowicy ma wykonac Maszyna Turinga
@@ -39,11 +40,13 @@ class MaszynaTuringa //obiekt tej klasy bedzie Maszyna Turinga, ktora bedzie wyk
 {
 private:
     Stany aktualny_stan; //w jakim stanie jest
+    std::vector<Stany> lista_stanow;
 public:
     const Stany stan_poczatkowy = Stany::Qs;
     MaszynaTuringa(); //konstruktor bezparametrowy
     std::string dodaj_trzy(std::string liczba); //do podanej liczby binarnej doda 3 i zwroci wynik (liczby jako string'i)
     Decyzja podejmij_decyzje(char ss); //na podstawie tablicy przejsc podejmie decyzje przy wczytaniu danego symbolu
+    void wypisz_liste_kolejnych_stanow(); //napisze po kolei liste stanow, w ktorych byla Maszyna
 };
 
 //===== FUNKCJA =====
@@ -66,6 +69,8 @@ int main()
     std::cout << "Tasma przed: " << liczba_binarna << std::endl;
     zwiekszona_liczba = MT.dodaj_trzy(liczba_binarna); //Maszyna Turinga zwieksza liczbe o 3 i tekstowo wpisuje wynik do string'a
     std::cout << "Tasma po: " << zwiekszona_liczba << std::endl; //wypisanie wyniku
+    std::cout << "Maszyna Turinga przeszla przez stany: ";
+    MT.wypisz_liste_kolejnych_stanow(); //na koniec napisze, przek ktore stany przechodzila Maszyna
     return 0;
 }
 
@@ -74,6 +79,8 @@ int main()
 MaszynaTuringa::MaszynaTuringa() //konstruktor bezparametrowy
 {
     aktualny_stan = stan_poczatkowy; //Maszyna Turinga zaczyna w stanie poczatkowym
+    lista_stanow.empty();
+    lista_stanow.push_back(aktualny_stan); //pierwszy stan w ktorym jest Maszyna
 }
 
 //jako parametr przyjmuje liczbe binarna (zapisana jako string)
@@ -92,8 +99,9 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
         //w jaki stan ma przejsc
         if (co_zrobi.nowy_stan != Stany::pusty) //jesli nie jest tak, ze nie zmienia stanu
         {
-            this->aktualny_stan = co_zrobi.nowy_stan;
+            aktualny_stan = co_zrobi.nowy_stan;
         }
+        lista_stanow.push_back(aktualny_stan); //zapisuje w jakim jest stanie po odczytaniu tego (kolejnego) symbolu
         //jaki symbol ma wpisac na tasme
         if (co_zrobi.wpisywany_symbol != nic_nie_pisz) //jesli nie jest tak, ze nic nie wpisuje
         {
@@ -177,6 +185,20 @@ Decyzja MaszynaTuringa::podejmij_decyzje(char ss)
         }
     }
     return co_robic; //zwraca decyzje
+}
+
+void MaszynaTuringa::wypisz_liste_kolejnych_stanow() //napisze po kolei liste stanow, w ktorych byla Maszyna
+{
+    unsigned int x;
+    unsigned int ilosc_stanow = lista_stanow.size(); //ile stanow jest na liscie
+    for (x = 0; x < ilosc_stanow; x++)
+    {
+        std::cout << stan_tekstowo(lista_stanow[x]);
+        if (x != (ilosc_stanow-1) && ilosc_stanow > 1)
+        { std::cout << ", "; }
+    }
+    std::cout << std::endl;
+    return;
 }
 
 
