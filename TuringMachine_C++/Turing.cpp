@@ -88,7 +88,7 @@ std::string MaszynaTuringa::dodaj_trzy(std::string liczba)
     while (x >= 0)
     {
         co_zrobi = this->podejmij_decyzje(zwiekszona[x]); //wczytuje symbol z tasmy i podejmuje decyzje
-        std::cout << "Napotkano symbol " << zwiekszona[x] << std::endl;
+        std::cout << "Napotkano symbol \"" << zwiekszona[x] << "\"\n";
         //w jaki stan ma przejsc
         if (co_zrobi.nowy_stan != Stany::pusty) //jesli nie jest tak, ze nie zmienia stanu
         {
@@ -207,35 +207,34 @@ std::string ruch_tekstowo(Ruch r) //zwraca kierunek/rodzaj ruchu (wartosc enumer
 
 std::string decyzja_jako_tekst(Decyzja DD) //zwraca tesktowy czytelny opis decyzji
 {
-    std::string opis = ""; //pusty string. Bede do niego dodawal 3 zdania
+    std::string opis; //pusty string. Bede do niego dodawal 3 zdania
     if (DD.nowy_stan != Stany::pusty) //najpierw zdanie o nowym stanie. Inne jesli nie ma zmiany stanu
     {
-        opis += "Przechodzi do stanu " + stan_tekstowo(DD.nowy_stan);
+        opis = "Przechodzi do stanu " + stan_tekstowo(DD.nowy_stan) + ". ";
     }
     else
     {
-        opis += "Nie zmienia stanu";
+        opis = "Nie zmienia stanu. ";
     }
-    opis += ". "; //kropka i po niej nastepne zdanie
+    //po kropce nastepne zdanie
     if (DD.wpisywany_symbol != nic_nie_pisz)
     {
         opis += "Wpisuje \"";
         opis.append(1, DD.wpisywany_symbol); // "dopisz raz ten 'char' na koniec string'a"
-        opis += "\" na tasme";
+        opis += "\" na tasme. ";
     }
     else
     {
-        std::cout << "Nie wpisuje symbolu na tasme";
+        std::cout << "Nie wpisuje symbolu na tasme. ";
     }
-    opis += ". "; //kropka i po niej ostatnie (trzecie) zdanie
+    //po kropce nastepne zdanie
     if (DD.ruch != Ruch::nic) //zdanie rozne zaleznie od tego, czy glowica wykona ruch czy nie
     {
-        opis += "Przesuwa glowice " + ruch_tekstowo(DD.ruch);
+        opis += "Przesuwa glowice " + ruch_tekstowo(DD.ruch) + ".";
     }
     else
     {
-        opis += "Glowica nie rusza sie";
+        opis += "Glowica nie rusza sie.";
     }
-    opis += ".";
     return opis; //zwraca opis (teraz to juz 3 zdania w jednym wierszu)
 }
