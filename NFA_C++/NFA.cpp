@@ -306,7 +306,7 @@ void AutomatNiedeterministyczny::zakoncz_galaz(int indeks)
 Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz, Alfabet sym)
 {
     Stany nowy_stan = Stany::X;
-    int indeks_stanu, indeks_symbolu; //aby spojrzec do odpowiedniej komorki tablicy przejsc
+    int indeks_stanu=-1, indeks_symbolu; //aby spojrzec do odpowiedniej komorki tablicy przejsc
     int a;
     indeks_symbolu = jaki_indeks_symbolu_w_alfabecie(sym); //wie na ktora kolumne tablicy trzeba patrzec
     for (a = 0; a < 23; a++)
