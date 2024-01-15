@@ -49,13 +49,51 @@ enum Alfabet //alfabet nad ktorym zdefiniowano automat
     sC, // "c"
 };
 
-//===== TABLICA PRZEJSC =====
+//===== TABLICE =====
+//alfabet
 const char AlfabetTab[7] = {'0', '1', '2', '3', 'a', 'b', 'c'};
+//mozliwe stany
+const Stany MozliweStany[23] = { Qs,
+    Q01, Q11, Q21,  Q31,  Qa1,  Qb1,  Qc1,
+    Q02, Q12, Q22,  Q32,  Qa2,  Qb2,  Qc2,
+    Q03, Q13, Q23,  Q33,  Qa3,  Qb3,  Qc3,
+    X,
+};
+
+//tablica przejsc
+//jako 2 tablice 2D: jedna to pierwszy wiersz tabeli przejsc, druga to cala reszta
+const Stany TablicaPrzejsc_wiersz_1[7][2] = {
+    {Qs,Q01},{Qs,Q11},{Qs,Q21},{Qs,Q31},{Qs,Qa1},{Qs,Qb1},{Qs,Qc1},  //wiersz z tablicy dla stanu Qs 
+};
+const Stany TablicaPrzejsc[21][7] = {
+    {Q02,X,X,X,X,X,X},  //wiersz z tablicy dla stanu Q01
+    {X,Q12,X,X,X,X,X},  //wiersz z tablicy dla stanu Q11
+    {X,X,Q22,X,X,X,X},  //wiersz z tablicy dla stanu Q21
+    {X,X,X,Q32,X,X,X},  //...
+    {X,X,X,X,Qa2,X,X},
+    {X,X,X,X,X,Qb2,X},
+    {X,X,X,X,X,X,Qc2},
+    {Q03,X,X,X,X,X,X},  //wiersz z tablicy dla stanu Q02
+    {X,Q13,X,X,X,X,X},  //wiersz z tablicy dla stanu Q12
+    {X,X,Q23,X,X,X,X},  //wiersz z tablicy dla stanu Q22
+    {X,X,X,Q33,X,X,X},  //...
+    {X,X,X,X,Qa3,X,X},
+    {X,X,X,X,X,Qb3,X},
+    {X,X,X,X,X,X,Qc3},
+    {Q03,Q03,Q03,Q03,Q03,Q03,Q03},  //wiersz z tablicy dla stanu Q03
+    {Q13,Q13,Q13,Q13,Q13,Q13,Q13},  //wiersz z tablicy dla stanu Q13
+    {Q23,Q23,Q23,Q23,Q23,Q23,Q23},
+    {Q33,Q33,Q33,Q33,Q33,Q33,Q33},
+    {Qa3,Qa3,Qa3,Qa3,Qa3,Qa3,Qa3},
+    {Qb3,Qb3,Qb3,Qb3,Qb3,Qb3,Qb3},
+    {Qc3,Qc3,Qc3,Qc3,Qc3,Qc3,Qc3}
+};
 
 //===== FUNKCJE =====
 
 std::string stan_tekstowo(Stany ss); //zapisze dany stan (wartosc enumeratora) jako tekst
 char symbol_tekstowo(Alfabet ss); //zapisze symbol alfabetu (wartosc enumeratora) jako tekst
+int jaki_indeks_symbolu_w_alfabecie(Alfabet ss); //indeks znaku w tablicy 'char' odowiadajacego symbolowi alfabetu
 bool czy_nalezy_do_alfabetu(char cs); //czy dany drukowalny znak nalezy do alfabetu
 Alfabet wczytaj_symbol(char cs); //zmienia drukowalny znak na symbol alfabetu (wartosc enumeratora)
 std::string lowercase_string(std::string str); //w string'u sprawia ze litery sa male ("A" -> "a")
@@ -189,6 +227,21 @@ char symbol_tekstowo(Alfabet ss) //stan (wartosc enumeratora) bedzie napisany ja
     }
 }
 
+int jaki_indeks_symbolu_w_alfabecie(Alfabet ss)
+{
+    int a, indeks = -1;
+    char drukowalny = symbol_tekstowo(ss);
+    for (a = 0; a < 7; a++)
+    {
+        if (drukowalny == AlfabetTab[a])
+        {
+            indeks = a;
+            break;
+        }
+    }
+    return indeks;
+}
+
 bool czy_nalezy_do_alfabetu(char cs) //czy podany znak (zmienna typu "char") nalezy do alfabetu
 {
     int a, indeks = -1;
@@ -248,120 +301,27 @@ void AutomatNiedeterministyczny::zakoncz_galaz(int indeks)
 //parametrem wejsciowym jest aktualny stan automatu, oraz wczytany symbol
 Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz, Alfabet sym)
 {
-    Stany nowy_stan;
-    switch (stan_teraz) //podejmuje decyzje na podstawie wczytanego symbolu
+    Stany nowy_stan = Stany::X;
+    int indeks_stanu, indeks_symbolu; //aby spojrzec do odpowiedniej komorki tablicy przejsc
+    int a;
+    indeks_symbolu = jaki_indeks_symbolu_w_alfabecie(sym); //wie na ktora kolumne tablicy trzeba patrzec
+    for (a = 0; a < 23; a++)
     {
-    case Stany::Qs: //jesli teraz automat jest w stanie "Qs" (stan poczatkowy)
-    {
-        switch (sym)
+        if (stan_teraz == MozliweStany[a])
         {
-        case s0: { nowy_stan = Stany::Q01; break; }
-        case s1: { nowy_stan = Stany::Q11; break; }
-        case s2: { nowy_stan = Stany::Q21; break; }
-        case s3: { nowy_stan = Stany::Q31; break; }
-        case sA: { nowy_stan = Stany::Qa1; break; }
-        case sB: { nowy_stan = Stany::Qb1; break; }
-        case sC: { nowy_stan = Stany::Qc1; break; }
+            indeks_stanu = a; //na ktory wiersz trzeba patrzec
+            break;
         }
-        break;
     }
-    case Stany::Q01: //jesli automat jest teraz w stanie Q01 (raz napotkane znak '1')
+    if (indeks_stanu == 0) //jesli aktualny stan to Qs
     {
-        //jesli jest stan Q01 i wczytano symbol '0' to przejdzie do Q02 (bo juz sa dwa wczytane '0')
-        //inaczej obetnie galaz
-        if (sym == Alfabet::s0) { nowy_stan = Stany::Q02; }
-        else { nowy_stan = Stany::X; }
-        break;
+        nowy_stan = TablicaPrzejsc_wiersz_1[indeks_symbolu][1]; //zczytuje z tego, co udaje pierwszy wiersz tablicy
     }
-    case Stany::Q11: //jesli automat jest w stanie Q11
+    if (indeks_stanu > 0) //jesli stan teraz to inny niz Qs
     {
-        if (sym == Alfabet::s1) { nowy_stan = Stany::Q12; }
-        else { nowy_stan = Stany::X; }
-        break;
+        nowy_stan = TablicaPrzejsc[indeks_stanu - 1][indeks_symbolu]; //czyta z przeciecia wiersza i kolumny
     }
-    case Stany::Q21:
-    {
-        if (sym == Alfabet::s2) { nowy_stan = Stany::Q22; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Q31:
-    {
-        if (sym == Alfabet::s3) { nowy_stan = Stany::Q32; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qa1:
-    {
-        if (sym == Alfabet::sA) { nowy_stan = Stany::Qa2; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qb1:
-    {
-        if (sym == Alfabet::sB) { nowy_stan = Stany::Qb2; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qc1:
-    {
-        if (sym == Alfabet::sC) { nowy_stan = Stany::Qc2; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Q02: //jesli jest w stanie Q02 (bo juz wczytano dwa razy symbol '0')
-    {
-        if (sym == Alfabet::s0) { nowy_stan = Stany::Q03; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Q12: //jesli jestw w stanie Q12 (bo juz wczytano dwa razy symbol '1')
-    {
-        if (sym == Alfabet::s1) { nowy_stan = Stany::Q13; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Q22:
-    {
-        if (sym == Alfabet::s2) { nowy_stan = Stany::Q23; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Q32:
-    {
-        if (sym == Alfabet::s3) { nowy_stan = Stany::Q33; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qa2:
-    {
-        if (sym == Alfabet::sA) { nowy_stan = Stany::Qa3; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qb2:
-    {
-        if (sym == Alfabet::sB) { nowy_stan = Stany::Qb3; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    case Stany::Qc2:
-    {
-        if (sym == Alfabet::sC) { nowy_stan = Stany::Qc3; }
-        else { nowy_stan = Stany::X; }
-        break;
-    }
-    //stany gdzie juz wczytano 3 identyczne symbole jeden po drugim
-    case Stany::Q03: { nowy_stan = Stany::Q03; break; }
-    case Stany::Q13: { nowy_stan = Stany::Q13; break; }
-    case Stany::Q23: { nowy_stan = Stany::Q23; break; }
-    case Stany::Q33: { nowy_stan = Stany::Q33; break; }
-    case Stany::Qa3: { nowy_stan = Stany::Qa3; break; }
-    case Stany::Qb3: { nowy_stan = Stany::Qb3; break; }
-    case Stany::Qc3: { nowy_stan = Stany::Qc3; break; }
-    default: { nowy_stan = Stany::X; }
-    }
-    return nowy_stan; //zwraca stan, do ktorego przejdzie automat w ramach danej galezi drzewa przejsc
+    return nowy_stan;
 }
 
 AutomatNiedeterministyczny::AutomatNiedeterministyczny() //konstruktor bezparametrowy
