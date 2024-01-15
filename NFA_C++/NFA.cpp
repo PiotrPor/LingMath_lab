@@ -97,6 +97,7 @@ int jaki_indeks_symbolu_w_alfabecie(Alfabet ss); //indeks znaku w tablicy 'char'
 bool czy_nalezy_do_alfabetu(char cs); //czy dany drukowalny znak nalezy do alfabetu
 Alfabet wczytaj_symbol(char cs); //zmienia drukowalny znak na symbol alfabetu (wartosc enumeratora)
 std::string lowercase_string(std::string str); //w string'u sprawia ze litery sa male ("A" -> "a")
+void napisz_tablice_przejsc();
 
 //===== KLASA =====
 class AutomatNiedeterministyczny //klasa symuluje funkcjonowanie Skonczonego Automatu Niedeterministycznego (NFA)
@@ -131,6 +132,9 @@ int main()
     plik.open("plik_wejsciowy.txt"); //otwiera plik do odczytu
     if (plik.is_open()) //bedzie wykonywal czynnosci jesli poprawnie otwarto plik
     {
+        std::cout << "  AUTOMAT NIEDETERMINISTYCZNY\nTablica przejsc:" << std::endl;
+        napisz_tablice_przejsc();
+        std::cout << "\n-----------------\n\n";
         while (std::getline(plik, ciag, '#') && nie_ma_bledu) //czytaj z pliku wyrazy (ciagi rozdzielone znakiem '#')
         {
             ciag = lowercase_string(ciag); //zmien duze litery na male
@@ -439,4 +443,42 @@ bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_liter()
         }
     }
     return czy_jest_3;
+}
+
+//kolumna z wynikiem przejscia ma szerokosc 8
+//kolumna z aktualnym stanem ma szerokosc 4
+void napisz_tablice_przejsc()
+{
+    int a, b, c;
+    std::string oznaczenie_stanu;
+    //naglowek (tytuly kolumn)
+    std::cout << "    |";
+    for (a = 0; a < 7; a++)
+    { std::cout << "    " << AlfabetTab[a] << "   |"; }
+    std::cout << std::endl;
+    //pierwszy wiersz
+    std::cout << "Qs  |";
+    for (a = 0; a < 7; a++)
+    {
+        std::cout << " " << stan_tekstowo(TablicaPrzejsc_wiersz_1[a][0]);
+        std::cout << "," << stan_tekstowo(TablicaPrzejsc_wiersz_1[a][1]) << " |";
+    }
+    std::cout << std::endl;
+    //nastepne wiersze tablicy
+    for (a = 1; a < 23; a++)
+    {
+        std::cout << stan_tekstowo(MozliweStany[a]);
+        if (MozliweStany[a] == Stany::X) { std::cout << "  "; } //by byla rowna szerokosc kolumny
+        std::cout << " |";
+        for (b = 0; b < 7; b++)
+        {
+            oznaczenie_stanu = stan_tekstowo(TablicaPrzejsc[a - 1][b]);
+            std::cout << "   " << oznaczenie_stanu;
+            for (c = 3 + oznaczenie_stanu.length(); c <= 7; c++) // "X" i "Qa2" maja rozna dlugosc
+            { std::cout << " "; }
+            std::cout << "|";
+        }
+        std::cout << std::endl;
+    }
+    return;
 }
