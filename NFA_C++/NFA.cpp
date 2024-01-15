@@ -49,8 +49,13 @@ enum Alfabet //alfabet nad ktorym zdefiniowano automat
     sC, // "c"
 };
 
+//===== TABLICA PRZEJSC =====
+const char AlfabetTab[7] = {'0', '1', '2', '3', 'a', 'b', 'c'};
+
+//===== FUNKCJE =====
+
 std::string stan_tekstowo(Stany ss); //zapisze dany stan (wartosc enumeratora) jako tekst
-std::string symbol_tekstowo(Alfabet ss); //zapisze symbol alfabetu (warrtosc enumeratora) jako tekst
+char symbol_tekstowo(Alfabet ss); //zapisze symbol alfabetu (wartosc enumeratora) jako tekst
 bool czy_nalezy_do_alfabetu(char cs); //czy dany drukowalny znak nalezy do alfabetu
 Alfabet wczytaj_symbol(char cs); //zmienia drukowalny znak na symbol alfabetu (wartosc enumeratora)
 std::string lowercase_string(std::string str); //w string'u sprawia ze litery sa male ("A" -> "a")
@@ -143,54 +148,60 @@ std::string stan_tekstowo(Stany ss) //nazwe stanu wypisze tekstowo
 {
     switch (ss)
     {
-        case Stany::Qs: { return "Qs"; }
-        case Stany::Q01: { return "Q01"; }
-        case Stany::Q11: { return "Q11"; }
-        case Stany::Q21: { return "Q21"; }
-        case Stany::Q31: { return "Q31"; }
-        case Stany::Qa1: { return "Qa1"; }
-        case Stany::Qb1: { return "Qb1"; }
-        case Stany::Qc1: { return "Qc1"; }
-        case Stany::Q02: { return "Q02"; }
-        case Stany::Q12: { return "Q12"; }
-        case Stany::Q22: { return "Q22"; }
-        case Stany::Q32: { return "Q32"; }
-        case Stany::Qa2: { return "Qa2"; }
-        case Stany::Qb2: { return "Qb2"; }
-        case Stany::Qc2: { return "Qc2"; }
-        case Stany::Q03: { return "Q03"; }
-        case Stany::Q13: { return "Q13"; }
-        case Stany::Q23: { return "Q23"; }
-        case Stany::Q33: { return "Q33"; }
-        case Stany::Qa3: { return "Qa3"; }
-        case Stany::Qb3: { return "Qb3"; }
-        case Stany::Qc3: { return "Qc3"; }
-        default: { return "X"; }
+    case Stany::Qs: { return "Qs"; }
+    case Stany::Q01: { return "Q01"; }
+    case Stany::Q11: { return "Q11"; }
+    case Stany::Q21: { return "Q21"; }
+    case Stany::Q31: { return "Q31"; }
+    case Stany::Qa1: { return "Qa1"; }
+    case Stany::Qb1: { return "Qb1"; }
+    case Stany::Qc1: { return "Qc1"; }
+    case Stany::Q02: { return "Q02"; }
+    case Stany::Q12: { return "Q12"; }
+    case Stany::Q22: { return "Q22"; }
+    case Stany::Q32: { return "Q32"; }
+    case Stany::Qa2: { return "Qa2"; }
+    case Stany::Qb2: { return "Qb2"; }
+    case Stany::Qc2: { return "Qc2"; }
+    case Stany::Q03: { return "Q03"; }
+    case Stany::Q13: { return "Q13"; }
+    case Stany::Q23: { return "Q23"; }
+    case Stany::Q33: { return "Q33"; }
+    case Stany::Qa3: { return "Qa3"; }
+    case Stany::Qb3: { return "Qb3"; }
+    case Stany::Qc3: { return "Qc3"; }
+    default: { return "X"; }
     }
 }
 
-std::string symbol_tekstowo(Alfabet ss) //stan (wartosc enumeratora) bedzie napisany jako drukowalny znak
+char symbol_tekstowo(Alfabet ss) //stan (wartosc enumeratora) bedzie napisany jako drukowalny znak
 {
     switch (ss)
     {
-        case Alfabet::s0: { return "0"; }
-        case Alfabet::s1: { return "1"; }
-        case Alfabet::s2: { return "2"; }
-        case Alfabet::s3: { return "3"; }
-        case Alfabet::sA: { return "a"; }
-        case Alfabet::sB: { return "b"; }
-        case Alfabet::sC: { return "c"; }
-        default: { return "X"; }
+    case Alfabet::s0: { return '0'; }
+    case Alfabet::s1: { return '1'; }
+    case Alfabet::s2: { return '2'; }
+    case Alfabet::s3: { return '3'; }
+    case Alfabet::sA: { return 'a'; }
+    case Alfabet::sB: { return 'b'; }
+    case Alfabet::sC: { return 'c'; }
+    default: { return 'X'; }
     }
 }
 
 bool czy_nalezy_do_alfabetu(char cs) //czy podany znak (zmienna typu "char") nalezy do alfabetu
 {
-    bool czy_nalezy;
-    if (cs == '0' || cs == '1' || cs == '2' || cs == '3') { czy_nalezy = true; }
-    else if (cs == 'a' || cs == 'b' || cs == 'c') { czy_nalezy = true; }
-    else { czy_nalezy = false; }
-    return czy_nalezy;
+    int a, indeks = -1;
+    for (a = 0; a < 7; a++)
+    {
+        if (cs == AlfabetTab[a])
+        {
+            indeks = a;
+            break;
+        }
+    }
+    if (indeks >= 0) { return true; }
+    else { return false; }
 }
 
 Alfabet wczytaj_symbol(char cs) //przetlumaczy znak drukowalny na wartosc enumeratora (o ile znak nalezy do alfabetu)
@@ -198,13 +209,13 @@ Alfabet wczytaj_symbol(char cs) //przetlumaczy znak drukowalny na wartosc enumer
     Alfabet drukowalny_jako_symbol;
     switch (cs)
     {
-        case '0': { drukowalny_jako_symbol = Alfabet::s0; break; }
-        case '1': { drukowalny_jako_symbol = Alfabet::s1; break; }
-        case '2': { drukowalny_jako_symbol = Alfabet::s2; break; }
-        case '3': { drukowalny_jako_symbol = Alfabet::s3; break; }
-        case 'a': { drukowalny_jako_symbol = Alfabet::sA; break; }
-        case 'b': { drukowalny_jako_symbol = Alfabet::sB; break; }
-        case 'c': { drukowalny_jako_symbol = Alfabet::sC; break; }
+    case '0': { drukowalny_jako_symbol = Alfabet::s0; break; }
+    case '1': { drukowalny_jako_symbol = Alfabet::s1; break; }
+    case '2': { drukowalny_jako_symbol = Alfabet::s2; break; }
+    case '3': { drukowalny_jako_symbol = Alfabet::s3; break; }
+    case 'a': { drukowalny_jako_symbol = Alfabet::sA; break; }
+    case 'b': { drukowalny_jako_symbol = Alfabet::sB; break; }
+    case 'c': { drukowalny_jako_symbol = Alfabet::sC; break; }
     }
     return drukowalny_jako_symbol;
 }
@@ -240,115 +251,115 @@ Stany AutomatNiedeterministyczny::nastepny_stan_wedlug_tablicy(Stany stan_teraz,
     Stany nowy_stan;
     switch (stan_teraz) //podejmuje decyzje na podstawie wczytanego symbolu
     {
-        case Stany::Qs: //jesli teraz automat jest w stanie "Qs" (stan poczatkowy)
+    case Stany::Qs: //jesli teraz automat jest w stanie "Qs" (stan poczatkowy)
+    {
+        switch (sym)
         {
-            switch (sym)
-            {
-            case s0: { nowy_stan = Stany::Q01; break; }
-            case s1: { nowy_stan = Stany::Q11; break; }
-            case s2: { nowy_stan = Stany::Q21; break; }
-            case s3: { nowy_stan = Stany::Q31; break; }
-            case sA: { nowy_stan = Stany::Qa1; break; }
-            case sB: { nowy_stan = Stany::Qb1; break; }
-            case sC: { nowy_stan = Stany::Qc1; break; }
-            }
-            break;
+        case s0: { nowy_stan = Stany::Q01; break; }
+        case s1: { nowy_stan = Stany::Q11; break; }
+        case s2: { nowy_stan = Stany::Q21; break; }
+        case s3: { nowy_stan = Stany::Q31; break; }
+        case sA: { nowy_stan = Stany::Qa1; break; }
+        case sB: { nowy_stan = Stany::Qb1; break; }
+        case sC: { nowy_stan = Stany::Qc1; break; }
         }
-        case Stany::Q01: //jesli automat jest teraz w stanie Q01 (raz napotkane znak '1')
-        {
-            //jesli jest stan Q01 i wczytano symbol '0' to przejdzie do Q02 (bo juz sa dwa wczytane '0')
-            //inaczej obetnie galaz
-            if (sym == Alfabet::s0) { nowy_stan = Stany::Q02; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q11: //jesli automat jest w stanie Q11
-        {
-            if (sym == Alfabet::s1) { nowy_stan = Stany::Q12; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q21:
-        {
-            if (sym == Alfabet::s2) { nowy_stan = Stany::Q22; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q31:
-        {
-            if (sym == Alfabet::s3) { nowy_stan = Stany::Q32; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qa1:
-        {
-            if (sym == Alfabet::sA) { nowy_stan = Stany::Qa2; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qb1:
-        {
-            if (sym == Alfabet::sB) { nowy_stan = Stany::Qb2; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qc1:
-        {
-            if (sym == Alfabet::sC) { nowy_stan = Stany::Qc2; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q02: //jesli jest w stanie Q02 (bo juz wczytano dwa razy symbol '0')
-        {
-            if (sym == Alfabet::s0) { nowy_stan = Stany::Q03; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q12: //jesli jestw w stanie Q12 (bo juz wczytano dwa razy symbol '1')
-        {
-            if (sym == Alfabet::s1) { nowy_stan = Stany::Q13; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q22:
-        {
-            if (sym == Alfabet::s2) { nowy_stan = Stany::Q23; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Q32:
-        {
-            if (sym == Alfabet::s3) { nowy_stan = Stany::Q33; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qa2:
-        {
-            if (sym == Alfabet::sA) { nowy_stan = Stany::Qa3; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qb2:
-        {
-            if (sym == Alfabet::sB) { nowy_stan = Stany::Qb3; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        case Stany::Qc2:
-        {
-            if (sym == Alfabet::sC) { nowy_stan = Stany::Qc3; }
-            else { nowy_stan = Stany::X; }
-            break;
-        }
-        //stany gdzie juz wczytano 3 identyczne symbole jeden po drugim
-        case Stany::Q03: { nowy_stan = Stany::Q03; break; }
-        case Stany::Q13: { nowy_stan = Stany::Q13; break; }
-        case Stany::Q23: { nowy_stan = Stany::Q23; break; }
-        case Stany::Q33: { nowy_stan = Stany::Q33; break; }
-        case Stany::Qa3: { nowy_stan = Stany::Qa3; break; }
-        case Stany::Qb3: { nowy_stan = Stany::Qb3; break; }
-        case Stany::Qc3: { nowy_stan = Stany::Qc3; break; }
-        default: { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q01: //jesli automat jest teraz w stanie Q01 (raz napotkane znak '1')
+    {
+        //jesli jest stan Q01 i wczytano symbol '0' to przejdzie do Q02 (bo juz sa dwa wczytane '0')
+        //inaczej obetnie galaz
+        if (sym == Alfabet::s0) { nowy_stan = Stany::Q02; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q11: //jesli automat jest w stanie Q11
+    {
+        if (sym == Alfabet::s1) { nowy_stan = Stany::Q12; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q21:
+    {
+        if (sym == Alfabet::s2) { nowy_stan = Stany::Q22; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q31:
+    {
+        if (sym == Alfabet::s3) { nowy_stan = Stany::Q32; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qa1:
+    {
+        if (sym == Alfabet::sA) { nowy_stan = Stany::Qa2; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qb1:
+    {
+        if (sym == Alfabet::sB) { nowy_stan = Stany::Qb2; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qc1:
+    {
+        if (sym == Alfabet::sC) { nowy_stan = Stany::Qc2; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q02: //jesli jest w stanie Q02 (bo juz wczytano dwa razy symbol '0')
+    {
+        if (sym == Alfabet::s0) { nowy_stan = Stany::Q03; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q12: //jesli jestw w stanie Q12 (bo juz wczytano dwa razy symbol '1')
+    {
+        if (sym == Alfabet::s1) { nowy_stan = Stany::Q13; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q22:
+    {
+        if (sym == Alfabet::s2) { nowy_stan = Stany::Q23; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Q32:
+    {
+        if (sym == Alfabet::s3) { nowy_stan = Stany::Q33; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qa2:
+    {
+        if (sym == Alfabet::sA) { nowy_stan = Stany::Qa3; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qb2:
+    {
+        if (sym == Alfabet::sB) { nowy_stan = Stany::Qb3; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    case Stany::Qc2:
+    {
+        if (sym == Alfabet::sC) { nowy_stan = Stany::Qc3; }
+        else { nowy_stan = Stany::X; }
+        break;
+    }
+    //stany gdzie juz wczytano 3 identyczne symbole jeden po drugim
+    case Stany::Q03: { nowy_stan = Stany::Q03; break; }
+    case Stany::Q13: { nowy_stan = Stany::Q13; break; }
+    case Stany::Q23: { nowy_stan = Stany::Q23; break; }
+    case Stany::Q33: { nowy_stan = Stany::Q33; break; }
+    case Stany::Qa3: { nowy_stan = Stany::Qa3; break; }
+    case Stany::Qb3: { nowy_stan = Stany::Qb3; break; }
+    case Stany::Qc3: { nowy_stan = Stany::Qc3; break; }
+    default: { nowy_stan = Stany::X; }
     }
     return nowy_stan; //zwraca stan, do ktorego przejdzie automat w ramach danej galezi drzewa przejsc
 }
@@ -404,8 +415,10 @@ void AutomatNiedeterministyczny::przedstaw_drzewo()
     {
         for (b = 0; b < drzewo_przejsc[a].size(); b++)
         {
-            if (b > 0) 
-            { std::cout << " -> "; } //miedzy kolejnymi stanami jest strzalka (bo NFA przechodzil od stanu do stanu)
+            if (b > 0)
+            {
+                std::cout << " -> ";
+            } //miedzy kolejnymi stanami jest strzalka (bo NFA przechodzil od stanu do stanu)
             std::cout << stan_tekstowo(drzewo_przejsc[a][b]);
         }
         if (a < (drzewo_przejsc.size() - 1))
@@ -425,7 +438,7 @@ void AutomatNiedeterministyczny::wylistuj_aktualny_stan() //wypisz tesktowostany
     unsigned int x;
     for (x = 0; x < aktualne_stany.size(); x++)
     {
-        if (x > 0) 
+        if (x > 0)
         {
             std::cout << ", ";
         }
@@ -442,7 +455,7 @@ bool AutomatNiedeterministyczny::czy_potrojenie_nastapilo_wsrod_cyfr()
     unsigned int x;
     for (x = 0; x < aktualne_stany.size(); x++) //przeszukuje liste aktualnych stanow automatu
     {
-        if (aktualne_stany[x] == Stany::Q03 || aktualne_stany[x] == Stany::Q13 || 
+        if (aktualne_stany[x] == Stany::Q03 || aktualne_stany[x] == Stany::Q13 ||
             aktualne_stany[x] == Stany::Q23 || aktualne_stany[x] == Stany::Q33)
         {
             czy_jest_trojka = true;
