@@ -4,34 +4,29 @@
 
 int main()
 {
-    std::string testowany = "25.02";
-    std::string testowany2 = "4+20*0.25";
-    std::string testowany3 = "(2+0.1)";
-    std::string testowany4 = "2.4*(5+4/2)";
-    std::string testowany5 = "5*(14-2.7);(22.8-1)/2";
-    //
+    std::string testowany;
+
     std::string L = "\\-?[0-9]+(\\.[0-9]+)?";
     std::string P = "(\\+|\\-|\\*|\\/)";
-
     std::string W1 = L;
     std::string W2 = "\\(" + L + "(" + P + L + ")+\\)";
     std::string W = "("+ W1 + "|" + W2 + ")";
     std::string S = W + "(" + P + W + ")+";
     std::string Y = S + "(\\;" + S + ")*";
 
-    //std::string wzorzec_bez_nawiasu = "\\-?[0-9]+(\\.[0-9]+)?((\\+|\\-|\\*|\\/)\\-?[0-9]+(\\.[0-9]+)?)*";
-    //std::string bez_nawiasu_2 = L + "(" + P + L + ")*";
-    //
-    std::cout << testowany5 << std::endl;
+    std::cout << "Wpisz dzialania na liczbach (jesli kilka to rozdziel je srednikami, bez odstepow):" << std::endl;
+    std::getline(std::cin, testowany);
+
+    std::cout << "\nCzy \""<< testowany <<"\" pasuje do wzorca?" << std::endl;
     std::regex wyrazenie_regularne(Y);
-    if (std::regex_match(testowany5, wyrazenie_regularne))
+    if (std::regex_match(testowany, wyrazenie_regularne))
     {
         std::cout << "Pasuje" << std::endl;
     }
     else
     {
-        std::cout << "Nie pasuje do wzorca" << std::endl;
+        std::cout << "Nie pasuje" << std::endl;
     }
-    std::cout << "\n---\n----\n" << S << "\n---\n----\n";
+    std::cout << "\n---\nwyrazenie regularne:\n" << Y << "\n----\n";
     return 0;
 }
