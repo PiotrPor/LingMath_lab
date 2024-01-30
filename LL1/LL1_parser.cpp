@@ -19,6 +19,7 @@ void parse_P(std::string ss, unsigned int* numer_znaku);
 void parse_W(std::string ss, unsigned int* numer_znaku);
 void parse_S(std::string ss, unsigned int* numer_znaku);
 void komunikat_o_zlym_znaku(unsigned int indeks_znaku, std::string ss, std::vector<char> wektor);
+void komunikat_nieten_znak(unsigned int indeks_znaku, char spodziewany, char napotkany);
 
 int main()
 {
@@ -30,7 +31,7 @@ int main()
     indeks_znaku = 0;
     czy_poprawny = true;
     parse_S(napis, &indeks_znaku);
-    if (!czy_poprawny)
+    if (czy_poprawny)
     {
         std::cout << "dobry" << std::endl;
     }
@@ -92,6 +93,7 @@ void parse_C(std::string ss, unsigned int numer_znaku)
     else
     {
         czy_poprawny = false;
+        komunikat_o_zlym_znaku(numer_znaku, ss, first_C);
     }
     return;
 }
@@ -107,6 +109,7 @@ void parse_O(std::string ss, unsigned int numer_znaku)
     else
     {
         czy_poprawny = false;
+        komunikat_o_zlym_znaku(numer_znaku, ss, first_O);
     }
     return;
 }
@@ -124,11 +127,14 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
         if (znak != ')')
         {
             czy_poprawny = false;
+            komunikat_nieten_znak(*numer_znaku, ')', znak);
             return;
         }
     }
     else
     {
+        parse_C(ss, *numer_znaku);
+        *numer_znaku += 1;
         while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C))
         {
             parse_C(ss, *numer_znaku);
@@ -136,6 +142,8 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
         }
         if (ss[*numer_znaku] == '.')
         {
+            *numer_znaku += 1;
+            parse_C(ss, *numer_znaku);
             *numer_znaku += 1;
             while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C))
             {
@@ -151,44 +159,47 @@ void parse_W(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
     if (!czy_poprawny) { return; }
-    if (czy_nalezy_do_pierwszych(znak, first_P))
+    parse_P(ss, numer_znaku);
+    *numer_znaku += 1;
+    while (czy_nalezy_do_pierwszych(znak, first_O))
     {
+        parse_O(ss, *numer_znaku);
+        *numer_znaku += 1;
         parse_P(ss, numer_znaku);
-        while (czy_nalezy_do_pierwszych(znak, first_O))
-        {
-            parse_O(ss, *numer_znaku);
-            *numer_znaku += 1;
-            parse_P(ss, numer_znaku);
-        }
+        *numer_znaku += 1;
     }
-    else
-    {
-        czy_poprawny = false;
-    }
+    //else
+    //{
+    //    czy_poprawny = false;
+    //}
     return;
 }
 
 void parse_S(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
-    if (czy_nalezy_do_pierwszych(znak, first_S))
-    {
+    if (!czy_poprawny) { return; }
+    //if (czy_nalezy_do_pierwszych(znak, first_S))
+    //{
         parse_W(ss, numer_znaku);
-        unsigned int gdzie_srednik = ss.find_first_of(';', *numer_znaku);
-        if (gdzie_srednik != std::string::npos)
+        //unsigned int gdzie_srednik = ss.find_first_of(';', *numer_znaku);
+        //if (gdzie_srednik != std::string::npos)
+        znak = ss[*numer_znaku];
+        if(znak == ';')
         {
-            *numer_znaku = gdzie_srednik + 1;
+            //*numer_znaku = gdzie_srednik + 1;
             parse_W(ss, numer_znaku);
         }
         else
         {
             czy_poprawny = false;
+            komunikat_nieten_znak(*numer_znaku, ';', znak);
         }
-    }
-    else 
-    {
-        czy_poprawny = false;
-    }
+    //}
+    //else 
+    //{
+    //    czy_poprawny = false;
+    //}
     return;
 }
 
@@ -206,5 +217,11 @@ void komunikat_o_zlym_znaku(unsigned int indeks_znaku, std::string ss, std::vect
         }
     }
     std::cout << std::endl;
+    return;
+}
+
+void komunikat_nieten_znak(unsigned int indeks_znaku, char spodziewany, char napotkany)
+{
+    std::cout << "Error! Na pozycji "<<indeks_znaku<<" jest \"" << napotkany << "\" zamiast \"" << spodziewany << "\"" << std::endl;
     return;
 }
