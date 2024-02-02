@@ -121,7 +121,6 @@ void parse_O(std::string ss, unsigned int numer_znaku)
 void parse_P(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
-    //TODO
     std::cout << "Parse P" << std::endl;
     std::cout << "P: znak " << *numer_znaku << std::endl;
     if (znak == '(')
@@ -129,9 +128,9 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
         *numer_znaku += 1;
         std::cout << "P: znak " << *numer_znaku << std::endl;
         parse_W(ss, numer_znaku);
-        std::cout << "P: znak " << *numer_znaku << std::endl;
+        std::cout << "P: znak " << *numer_znaku <<" po parse_W w nawiasie"<< std::endl;
         *numer_znaku += 1;
-        std::cout << "P: znak " << *numer_znaku << std::endl;
+        std::cout << "P: znak " << *numer_znaku << " (sprawdzi czy to nawias zamykajacy)"<<std::endl;
         znak = ss[*numer_znaku];
         if (znak != ')')
         {
@@ -164,6 +163,11 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
                 *numer_znaku += 1;
                 std::cout << "P: znak " << *numer_znaku << std::endl;
             }
+            *numer_znaku -= 1;
+        }
+        else
+        {
+            *numer_znaku -= 1;
         }
     }
     return;
@@ -176,7 +180,7 @@ void parse_W(std::string ss, unsigned int* numer_znaku)
     std::cout << "Parse W" << std::endl;
     std::cout << "W: znak " << *numer_znaku << std::endl;
     parse_P(ss, numer_znaku);
-    //*numer_znaku += 1;
+    *numer_znaku += 1;
     std::cout << "W: znak " << *numer_znaku << std::endl;
     std::cout << "  sprawdzi czy " << *numer_znaku << " to operator\n";
     while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_O))
@@ -186,13 +190,10 @@ void parse_W(std::string ss, unsigned int* numer_znaku)
         *numer_znaku += 1;
         std::cout << "W: znak " << *numer_znaku << " po parse_O"<<std::endl;
         parse_P(ss, numer_znaku);
-        //*numer_znaku += 1;
+        *numer_znaku += 1;
         std::cout << "W: znak " << *numer_znaku << " po prarse_P"<<std::endl;
     }
-    //else
-    //{
-    //    czy_poprawny = false;
-    //}
+    *numer_znaku -= 1;
     return;
 }
 
@@ -200,23 +201,30 @@ void parse_S(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
     if (!czy_poprawny) { return; }
+    bool czy_ma_pracowac = true;
     std::cout << "Parse S" << std::endl;
     std::cout << "S: znak " << *numer_znaku << std::endl;
-    //if (czy_nalezy_do_pierwszych(znak, first_S))
-    //{
+    while(czy_ma_pracowac)
+    {
+        std::cout << "S: znak " << *numer_znaku <<" przed uruchomieniem parse_W" << std::endl;
         parse_W(ss, numer_znaku);
-        std::cout << "S: znak " << *numer_znaku << std::endl;
+        *numer_znaku += 1;
+        std::cout << "S: znak " << *numer_znaku <<" po parse_W" << std::endl;
         //unsigned int gdzie_srednik = ss.find_first_of(';', *numer_znaku);
         //if (gdzie_srednik != std::string::npos)
         znak = ss[*numer_znaku];
-        std::cout << "  S sprawdzi \";\"" << std::endl;
+        std::cout << "  S sprawdzi czy to \";\"" << std::endl;
         if(znak == ';')
         {
-            if (*numer_znaku < ss.size()-1)
+            if (*numer_znaku >= ss.size()-1)
             {
-                //*numer_znaku = gdzie_srednik + 1;
-                parse_W(ss, numer_znaku);
-                std::cout << "S: znak " << *numer_znaku << std::endl;
+                czy_ma_pracowac = false;
+            }
+            else
+            {
+                //  //*numer_znaku = gdzie_srednik + 1;
+                //parse_W(ss, numer_znaku);
+                //std::cout << "S: znak " << *numer_znaku << std::endl;
             }
         }
         else
@@ -224,11 +232,7 @@ void parse_S(std::string ss, unsigned int* numer_znaku)
             czy_poprawny = false;
             komunikat_nieten_znak(*numer_znaku, ';', znak);
         }
-    //}
-    //else 
-    //{
-    //    czy_poprawny = false;
-    //}
+    }
     return;
 }
 
