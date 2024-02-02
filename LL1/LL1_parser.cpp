@@ -1,47 +1,71 @@
-#include <iostream>
-
+﻿#include <iostream>
 #include <vector>
 #include <string>
 
+/*
+Gramatyka (przed upraszczaniem diagramow skladniowych)
+S ::= W;Z
+Z ::= W;Z | ε
+W ::= PT
+T ::= OW | ε
+P ::= R | (W)
+R ::= LF
+F ::= .L | ε
+L ::= CM
+M ::= L | ε
+C ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+O ::= * | : | + | - | ^
+*/
+
 //globalne zmienne
-bool czy_poprawny;
+bool czy_poprawny; //poniewaz to globalna zmienna, to wszystkie funkcje i main() maja do niej dostep
+//abiory symboli pierwszych (dla produkcji, ktore sa na uproszczonym diagramie skladniowym)
 const std::vector<char> first_C{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9' };
 const std::vector<char> first_O{ '*', ':', '+', '-', '^' };
-const std::vector<char> first_P{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', ')' };
-const std::vector<char> first_W{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', ')' };
-const std::vector<char> first_S{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', ')' };
+const std::vector<char> first_P{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', '(' };
+const std::vector<char> first_W{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', '(' };
+const std::vector<char> first_S{ '0','1', '2', '3', '4', '5', '6', '7', '8', '9', '(' };
 
-bool czy_nalezy_do_pierwszych(char znak, std::vector<char> sprawdzany_wektor);
-//void wywolaj_funkcje(char znak);
-void parse_C(std::string ss, unsigned int numer_znaku);
-void parse_O(std::string ss, unsigned int numer_znaku);
-void parse_P(std::string ss, unsigned int* numer_znaku);
+bool czy_nalezy_do_pierwszych(char znak, std::vector<char> sprawdzany_wektor); //sprawdza czy dany znak nalezy do symboli pierwszych
+void parse_C(std::string ss, unsigned int numer_znaku); //odpowiada produkcji "C" z uproszczonego diagramu skladniowego
+void parse_O(std::string ss, unsigned int numer_znaku); //...
+void parse_P(std::string ss, unsigned int* numer_znaku); //odpowiada produkcji "P" z uproszczonego diagramu skladniowego
 void parse_W(std::string ss, unsigned int* numer_znaku);
 void parse_S(std::string ss, unsigned int* numer_znaku);
-void komunikat_o_zlym_znaku(unsigned int indeks_znaku, std::string ss, std::vector<char> wektor);
-void komunikat_nieten_znak(unsigned int indeks_znaku, char spodziewany, char napotkany);
+void komunikat_o_zlym_znaku(unsigned int indeks_znaku, std::string ss, std::vector<char> wektor); //gdy znak nie jest symbolem pierwszym
+void komunikat_nieten_znak(unsigned int indeks_znaku, char spodziewany, char napotkany); //gdy to inny znak niz sie spodziewano
+
+//-------------------------------
+//       MAIN
+//-------------------------------
 
 int main()
 {
-    std::string napis;
-    unsigned int indeks_znaku, rozmiar;
+    std::string napis; //do tego 'string' wpisze napis podany przez uzytkownika
+    unsigned int indeks_znaku; //potrzebne zmienne
+    //unsigned int rozmiar;
     std::cout << "Wpisz dzialania arytmetyczne porozdzielane srednikami (nie pisz spacji):" << std::endl;
     std::getline(std::cin, napis);
-    rozmiar = napis.size();
+    //rozmiar = napis.size();
     indeks_znaku = 0;
     czy_poprawny = true;
     parse_S(napis, &indeks_znaku);
     if (czy_poprawny)
     {
-        std::cout << "dobry" << std::endl;
+        std::cout << "Ciag zgodny z gramatyka" << std::endl;
     }
     else
     {
-        std::cout << "Niedobry" << std::endl;
+        std::cout << "Ciag niezgodny z gramatyka" << std::endl;
     }
     return 0;
 }
 
+//-------------------------------
+//         FUNKCJE
+//-------------------------------
+
+//czy podany znak nalezy do podanego zbioru symboli pierwszych
 bool czy_nalezy_do_pierwszych(char znak, std::vector<char> sprawdzany_wektor)
 {
     bool werdykt = false;
@@ -57,82 +81,55 @@ bool czy_nalezy_do_pierwszych(char znak, std::vector<char> sprawdzany_wektor)
     return werdykt;
 }
 
-/*void wywolaj_funkcje(char znak)
-{
-    if (czy_nalezy_do_pierwszych(znak, first_C))
-    {
-        //parse_C(znak);
-    }
-    if (czy_nalezy_do_pierwszych(znak, first_O))
-    {
-        //parse_C(znak);
-    }
-    if (czy_nalezy_do_pierwszych(znak, first_P))
-    {
-        //parse_C(znak);
-    }
-    if (czy_nalezy_do_pierwszych(znak, first_W))
-    {
-        //parse_C(znak);
-    }
-    if (czy_nalezy_do_pierwszych(znak, first_S))
-    {
-        //parse_C(znak);
-    }
-    return;
-}*/
-
+//odpowiada produkcji "C" z uproszczonego diagramu skladniowego
 void parse_C(std::string ss, unsigned int numer_znaku)
 {
     char znak = ss[numer_znaku];
-    if (!czy_poprawny) { return; }
-    std::cout << "Parse C" << std::endl;
-    std::cout << "C: znak " << numer_znaku << std::endl;
-    if (czy_nalezy_do_pierwszych(znak, first_C))
+    if (!czy_poprawny) //nie analizuje ciagu jesli jest niepoprawny 
+    { return; }
+    if (czy_nalezy_do_pierwszych(znak, first_C)) //czy nalezy do symboli pierwszych produkcji C
     {
-        //nic bo to terminal?
+        //nic nie robi bo to terminal
     }
     else
     {
         czy_poprawny = false;
-        komunikat_o_zlym_znaku(numer_znaku, ss, first_C);
+        komunikat_o_zlym_znaku(numer_znaku, ss, first_C); //bo nie nalezy do symboli pierwszych
     }
     return;
 }
 
+//odpowiada produkcji "O" z uproszczonego diagramu skladniowego
 void parse_O(std::string ss, unsigned int numer_znaku)
 {
     char znak = ss[numer_znaku];
-    if (!czy_poprawny) { return; }
-    std::cout << "Parse O" << std::endl;
-    std::cout << "O: znak " << numer_znaku << std::endl;
-    if (czy_nalezy_do_pierwszych(znak, first_O))
+    if (!czy_poprawny) //nie analizuje ciagu jesli jest niepoprawny 
+    { return; }
+    if (czy_nalezy_do_pierwszych(znak, first_O)) //czy nalezy do symboli pierwszych produkcji O
     {
-        //nic bo to terminal?
+        //nic nie robi bo to terminal
     }
     else
     {
         czy_poprawny = false;
-        komunikat_o_zlym_znaku(numer_znaku, ss, first_O);
+        komunikat_o_zlym_znaku(numer_znaku, ss, first_O); //bo nie nalezy do symboli pierwszych
     }
     return;
 }
 
+//odpowiada produkcji "P" z uproszczonego diagramu skladniowego
 void parse_P(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
-    std::cout << "Parse P" << std::endl;
-    std::cout << "P: znak " << *numer_znaku << std::endl;
-    if (znak == '(')
+    if (!czy_poprawny) //nie analizuje ciagu jesli jest niepoprawny 
+    { return; }
+    if (znak == '(') //czy pierwsze co napotka to "(" (potrzebne do wyboru strony alternatywy)
     {
         *numer_znaku += 1;
-        std::cout << "P: znak " << *numer_znaku << std::endl;
-        parse_W(ss, numer_znaku);
-        std::cout << "P: znak " << *numer_znaku <<" po parse_W w nawiasie"<< std::endl;
+        parse_W(ss, numer_znaku); //po otwarciu nawiasu jest produkcja "W"
         *numer_znaku += 1;
-        std::cout << "P: znak " << *numer_znaku << " (sprawdzi czy to nawias zamykajacy)"<<std::endl;
         znak = ss[*numer_znaku];
-        if (znak != ')')
+        if (znak != ')') //jesli po "W" nie zamknieto nawiasu
         {
             czy_poprawny = false;
             komunikat_nieten_znak(*numer_znaku, ')', znak);
@@ -141,27 +138,22 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
     }
     else
     {
-        parse_C(ss, *numer_znaku);
+        parse_C(ss, *numer_znaku); // jesli "P" nie zaczyna sie od nawiasu, to zaczyna sie od pierwszej cyfry liczby
         *numer_znaku += 1;
-        std::cout << "P: znak " << *numer_znaku << " po pierwszej cyfrze"<<std::endl;
-        while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C))
+        while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C)) //czy po pierwszej cyfrze sa kolejne cyfry
         {
             parse_C(ss, *numer_znaku);
             *numer_znaku += 1;
-            std::cout << "P: znak " << *numer_znaku << std::endl;
         }
-        if (ss[*numer_znaku] == '.')
+        if (ss[*numer_znaku] == '.') //jesli potem jest kropka (od ulamkow dziesietnych)
         {
             *numer_znaku += 1;
-            std::cout << "P: znak " << *numer_znaku <<" po kropce"<< std::endl;
-            parse_C(ss, *numer_znaku);
+            parse_C(ss, *numer_znaku); //po kropce jest cyfra
             *numer_znaku += 1;
-            std::cout << "P: znak " << *numer_znaku << " po cyfrze po kropce"<<std::endl;
-            while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C))
+            while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_C)) //po niej moga byc nastepne cyfry
             {
                 parse_C(ss, *numer_znaku);
                 *numer_znaku += 1;
-                std::cout << "P: znak " << *numer_znaku << std::endl;
             }
             *numer_znaku -= 1;
         }
@@ -173,63 +165,45 @@ void parse_P(std::string ss, unsigned int* numer_znaku)
     return;
 }
 
+//odpowiada produkcji "W" z uproszczonego diagramu skladniowego
 void parse_W(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
     if (!czy_poprawny) { return; }
-    std::cout << "Parse W" << std::endl;
-    std::cout << "W: znak " << *numer_znaku << std::endl;
     parse_P(ss, numer_znaku);
     *numer_znaku += 1;
-    std::cout << "W: znak " << *numer_znaku << std::endl;
-    std::cout << "  sprawdzi czy " << *numer_znaku << " to operator\n";
     while (czy_nalezy_do_pierwszych(ss[*numer_znaku], first_O))
     {
-        std::cout << "  to byl operator" << std::endl;
         parse_O(ss, *numer_znaku);
         *numer_znaku += 1;
-        std::cout << "W: znak " << *numer_znaku << " po parse_O"<<std::endl;
         parse_P(ss, numer_znaku);
         *numer_znaku += 1;
-        std::cout << "W: znak " << *numer_znaku << " po prarse_P"<<std::endl;
     }
     *numer_znaku -= 1;
     return;
 }
 
+//odpowiada produkcji "S" z uproszczonego diagramu skladniowego
 void parse_S(std::string ss, unsigned int* numer_znaku)
 {
     char znak = ss[*numer_znaku];
     if (!czy_poprawny) { return; }
     bool czy_ma_pracowac = true;
-    std::cout << "Parse S" << std::endl;
-    std::cout << "S: znak " << *numer_znaku << std::endl;
-    while(czy_ma_pracowac)
+    while(czy_ma_pracowac) //w zapetleniu przechodzi przez kolejne "W;"
     {
-        std::cout << "S: znak " << *numer_znaku <<" przed uruchomieniem parse_W" << std::endl;
         parse_W(ss, numer_znaku);
         *numer_znaku += 1;
-        std::cout << "S: znak " << *numer_znaku <<" po parse_W" << std::endl;
-        //unsigned int gdzie_srednik = ss.find_first_of(';', *numer_znaku);
-        //if (gdzie_srednik != std::string::npos)
         znak = ss[*numer_znaku];
-        std::cout << "  S sprawdzi czy to \";\"" << std::endl;
-        if(znak == ';')
+        if(znak == ';') //czy po "W" jest srednik
         {
             if (*numer_znaku >= ss.size()-1)
             {
-                czy_ma_pracowac = false;
-            }
-            else
-            {
-                //  //*numer_znaku = gdzie_srednik + 1;
-                //parse_W(ss, numer_znaku);
-                //std::cout << "S: znak " << *numer_znaku << std::endl;
+                czy_ma_pracowac = false; //srednik na koncu napisu, wiec mozna skonczyc prace
             }
         }
         else
         {
-            czy_poprawny = false;
+            czy_poprawny = false; //bo po "W" nie ma srednika
             komunikat_nieten_znak(*numer_znaku, ';', znak);
         }
     }
@@ -239,8 +213,8 @@ void parse_S(std::string ss, unsigned int* numer_znaku)
 void komunikat_o_zlym_znaku(unsigned int indeks_znaku, std::string ss, std::vector<char> wektor)
 {
     char znak = ss[indeks_znaku];
-    std::cout << "Error! Na pozycji " << indeks_znaku << " jest \"" << znak << "\" zamiast jednego z tych: ";
     unsigned int a;
+    std::cout << "Error! Na pozycji " << indeks_znaku << " jest \"" << znak << "\", spoza zbioru: ";
     for (a = 0; a < wektor.size(); a++)
     {
         std::cout << "\'" << wektor[a] << "\'";
